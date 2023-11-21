@@ -1,0 +1,49 @@
+.list-group {
+  padding: 0px;
+  margin-left: -25%;
+  margin-right: -25%;
+}
+
+.config-list {
+  display: grid;
+  grid-template-columns: 5rem 10rem auto 5rem;
+  justify-items: center;
+}
+
+p {
+  text-align: center;
+  font-size: small;
+}
+
+textarea {
+  width: 90%;
+  height: 2rem;
+  text-align: center;
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .list-group {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+
+  .config-list {
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .list-group {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+
+  .config-list {
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+}

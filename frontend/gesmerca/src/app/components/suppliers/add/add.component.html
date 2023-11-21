@@ -1,0 +1,91 @@
+<div class="container">
+    <div class="col-6 offset-3">
+        <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="inputCifNif" class="form-label">Cif/Nif</label>
+                <input type="text" class="form-control" id="inputCifNif" formControlName="cif_nif">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['cif_nif'].invalid && (supplierFormControls['cif_nif'].dirty || supplierFormControls['cif_nif'].touched)">
+                    <ng-container *ngIf="supplierFormControls['cif_nif'].errors?.['required']">
+                        Introduzca un cif/nif para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputName" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="inputName" formControlName="name">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['name'].invalid && (supplierFormControls['name'].dirty || supplierFormControls['name'].touched)">
+                    <ng-container *ngIf="supplierFormControls['name'].errors?.['required']">
+                        Introduzca un nombre para el proveedor.
+                    </ng-container>
+                    <ng-container *ngIf="supplierFormControls['name'].errors?.['minlength']">
+                        El nombre debe tener al menos 3 caracteres
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputAddress" class="form-label">Dirección</label>
+                <textarea class="form-control" id="inputAddress" formControlName="address"></textarea>
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['address'].invalid && (supplierFormControls['address'].dirty || supplierFormControls['address'].touched)">
+                    <ng-container *ngIf="supplierFormControls['address'].errors?.['required']">
+                        Introduzca una dirección para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputCity" class="form-label">Ciudad</label>
+                <input type="text" class="form-control" id="inputCity" formControlName="city">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['city'].invalid && (supplierFormControls['city'].dirty || supplierFormControls['city'].touched)">
+                    <ng-container *ngIf="supplierFormControls['city'].errors?.['required']">
+                        Introduzca una ciudad para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputPhone" class="form-label">Teléfono</label>
+                <input class="form-control" id="inputPhone" formControlName="phone">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['phone'].invalid && (supplierFormControls['phone'].dirty || supplierFormControls['phone'].touched)">
+                    <ng-container *ngIf="supplierFormControls['phone'].errors?.['required']">
+                        Introduzca un teléfono para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Email</label>
+                <input class="form-control" id="inputEmail" formControlName="email">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['email'].invalid && (supplierFormControls['email'].dirty || supplierFormControls['email'].touched)">
+                    <ng-container *ngIf="supplierFormControls['email'].errors?.['required']">
+                        Introduzca un email para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputWeb" class="form-label">Página web</label>
+                <input class="form-control" id="inputWeb" formControlName="web">
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['web'].invalid && (supplierFormControls['web'].dirty || supplierFormControls['web'].touched)">
+                    <ng-container *ngIf="supplierFormControls['web'].errors?.['required']">
+                        Introduzca una página web para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputNotes" class="form-label">Comentarios</label>
+                <textarea class="form-control" id="inputNotes" formControlName="notes" rows="4"></textarea>
+                <div class="form-text text-danger"
+                    *ngIf="supplierFormControls['notes'].invalid && (supplierFormControls['notes'].dirty || supplierFormControls['notes'].touched)">
+                    <ng-container *ngIf="supplierFormControls['notes'].errors?.['required']">
+                        Introduzca un comentario para el proveedor.
+                    </ng-container>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!supplierForm.valid || !isSubmitted">Crear
+                producto</button>
+        </form>
+    </div>
+</div>

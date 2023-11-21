@@ -1,0 +1,103 @@
+/* Global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import '~ngx-toastr/toastr';
+@font-face {
+    font-family: 'Ubuntu Light';
+    src: url('assets/fonts/Ubuntu/ubuntu-light-webfont.eot'); /* IE9 */
+    src: url('assets/fonts/Ubuntu/ubuntu-light-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('assets/fonts/Ubuntu/ubuntu-light-webfont.woff2') format('woff2'), /* Navegadores super modernos */
+         url('assets/fonts/Ubuntu/ubuntu-light-webfont.woff') format('woff'), /* Navegadores modernos */
+         url('/fonts/Ubuntu/ubuntu-light-webfont.ttf')  format('truetype'), /* Safari, Android, iOS */
+         url('assets/fonts/Ubuntu/ubuntu-light-webfont.svg#svgFontName') format('svg'); /* iOS */
+}
+
+/* Font in all web content by default */
+* {
+    font-family: 'Ubuntu Light', sans-serif;
+  }
+
+body{
+  background-color: var(--color-yellow-light);
+}
+
+/* Colors palette */
+:root {
+    --color-blue-light:   #6be3fb;
+    --color-coral:        #f1aa83;
+    --color-blue-3:       #4fa9be;
+    --color-blue-4:       #4494ac;
+    --color-blue-5:       #449cac;
+    --color-blue-light-2: #55bcd4;
+    --color-gray-light:   #d0d1d0;
+    --color-gray-meddium: #a4aca4;
+    --color-blue-dark:    #477e8b;
+    --color-yellow:       #FFC824;
+    --color-yellow-light: #FBFBDF;
+    --color-orange:       #FEAE1A;
+    --color-orange-dark:  #db9717;
+}
+
+/* Override bootstrap behaviour by default */
+.spinner-border{
+  border: none;
+  animation: fadeIn 3s,
+             rotation 3s infinite linear;
+}
+
+.spinner-border-sm{
+  background:local url(./assets/img/loading/dolly_mini.png);
+  width: 32px;
+  height: 32px;
+}
+
+.spinner-border-md{
+  background:local url(./assets/img/loading/dolly.png);
+  width: 64px;
+  height: 64px;
+}
+
+.spinner-border-lg{
+  background:local url(./assets/img/loading/dolly_grande.png);
+  width: 128px;
+  height: 128px;
+}
+
+.page-link.active, .active > .page-link{
+  --bs-pagination-color: var(--color-gray-dark);
+  --bs-pagination-hover-color: var(--color-orange-dark);
+  --bs-pagination-active-bg: var(--color-orange-dark);
+  --bs-pagination-active-border-color: var(--color-orange);
+  
+}
+.page-link{
+  --bs-pagination-hover-color: var(--color-orange);
+  color: var(--color-orange-dark);
+}
+
+.page-link a{
+  --bs-pagination-hover-color: var(--color-orange);
+  color: var(--color-orange-dark);
+}
+
+.page-link:active{
+  color: var(--color-orange-dark);
+}
+
+/* General animations */
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

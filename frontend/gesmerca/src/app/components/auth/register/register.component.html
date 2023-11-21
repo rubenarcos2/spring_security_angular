@@ -1,0 +1,39 @@
+<div class="col-6 offset-3">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="inputName" class="form-label">Nombre</label>
+      <input type="email" class="form-control" id="inputName" formControlName="name">
+      <div class="form-text text-danger"
+        *ngIf="registerFormControls['name'].invalid && (registerFormControls['name'].dirty || registerFormControls['name'].touched)">
+        <ng-container *ngIf="registerFormControls['name'].errors?.['required']">
+          Introduzca su nombre.
+        </ng-container>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputEmail" class="form-label">Email</label>
+      <input type="email" class="form-control" id="inputEmail" formControlName="email">
+      <div class="form-text text-danger"
+        *ngIf="registerFormControls['email'].invalid && (registerFormControls['email'].dirty || registerFormControls['email'].touched)">
+        <ng-container *ngIf="registerFormControls['email'].errors?.['required']">
+          Introduzca su email.
+        </ng-container>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="inputPassword" formControlName="password">
+      <div class="form-text text-danger"
+        *ngIf="registerFormControls['password'].invalid && (registerFormControls['password'].dirty || registerFormControls['password'].touched)">
+        <ng-container *ngIf="registerFormControls['password'].errors?.['required']">
+          Introduzca una contraseña.
+        </ng-container>
+        <ng-container
+          *ngIf="registerFormControls['password'].errors?.['pattern'] && !registerFormControls['password'].errors?.['required']">
+          La contraseña debe contener letras minúsculas, mayúsculas y al menos un número.
+        </ng-container>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || isSubmitted">Registrar</button>
+  </form>
+</div>

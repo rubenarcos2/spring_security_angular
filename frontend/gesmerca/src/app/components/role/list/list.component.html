@@ -1,0 +1,25 @@
+<div class="col-6 offset-3">
+    <div class="text-center">
+        <span *ngIf="!users && !roles" class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+    <ul class="list-group" *ngIf="users && roles">
+        <li class="list-group-item">
+            <div class="role-list">
+                <span class="fw-bold">Usuario</span>
+                <span class="fw-bold">Rol</span>
+                <span class="fw-bold"></span>
+            </div>
+        </li>
+        <li class="list-group-item" *ngFor="let user of users">
+            <div class="role-list">
+                <span>{{user.name}}</span>
+                <select name="select-roles" id="select-roles-{{user.id}}" disabled>
+                    <option *ngFor="let role of roles" value="{{user.id}}-{{role.id}}" id="{{user.id}}-{{role.id}}">
+                        {{role.roleName}}</option>
+                </select>
+                <button (click)="updateRole($event)" class="btn btn-sm btn-primary" id="btn-{{user.id}}"
+                    disabled>Guardar</button>
+            </div>
+        </li>
+    </ul>
+</div>

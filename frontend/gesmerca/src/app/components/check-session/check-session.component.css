@@ -1,0 +1,69 @@
+.checkSession-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 20px;
+  overflow: auto;
+}
+
+.checkSession-modal-body {
+  position: relative;
+  margin: 0 auto;
+  top: 10%;
+  width: 25%;
+  height: auto;
+  padding: 10px;
+  border-radius: 0.5rem;
+  background: var(--color-yellow-light);
+  text-align: center;
+}
+
+.accept {
+  margin: 2rem;
+}
+
+body.checkSession-modal-open {
+  overflow: hidden;
+}
+
+h1 {
+  text-align: center;
+}
+
+@media screen and (max-width: 980px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .checkSession-modal {
+    padding: 10px;
+  }
+
+  .checkSession-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .checkSession-modal {
+    padding: 10px;
+  }
+
+  .checkSession-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .checkSession-modal {
+    padding: 10px;
+  }
+
+  .checkSession-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}

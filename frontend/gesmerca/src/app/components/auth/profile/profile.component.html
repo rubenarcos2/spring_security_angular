@@ -1,0 +1,15 @@
+<div class="col-6 offset-3">
+  <div class="text-center">
+    <span *ngIf="!user" class="spinner-border spinner-border-lg align-center"></span>
+  </div>
+  <ul class="list-group" *ngIf="user">
+    <li class="list-group-item"><span class="fw-bold">Nombre</span> - {{user.name}}</li>
+    <li class="list-group-item"><span class="fw-bold">Email</span> - {{user.email}}</li>
+    <li class="list-group-item"><span class="fw-bold">Roles del usuario</span> -
+      <span *ngFor="let rol of user.roles">{{rol.roleName}} </span>
+    </li>
+    <li class="list-group-item"><span class="fw-bold">Permisos del usuario</span> -
+      <span *ngFor="let permission of user.permissions">{{permission.permissionName}} </span>
+    </li>
+  </ul>
+</div>

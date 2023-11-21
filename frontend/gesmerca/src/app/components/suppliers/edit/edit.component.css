@@ -1,0 +1,37 @@
+.container {
+  display: grid;
+  grid-template-columns: auto;
+}
+
+.input-map {
+  display: grid;
+  grid-template-columns: auto 5rem;
+  text-align: center;
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .mb-3 {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+
+  .mb-3 {
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .mb-3 {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+
+  .mb-3 {
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+}

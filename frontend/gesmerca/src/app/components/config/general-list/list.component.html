@@ -1,0 +1,77 @@
+<!--
+    <div class="text-center">
+    <span *ngIf="!configs" class="spinner-border spinner-border-lg align-center"></span>
+</div>
+<h1 *ngIf="configs" class="text-center">Configuración general</h1>
+<p *ngIf="configs" style="text-align: center;">Se aplica a los usuario no autenticados</p>
+<table *ngIf="authService.hasPermission('config-list')" class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Dominio</th>
+            <th>Valor</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let config of configs">
+            <td></td>
+            <td>{{config.name}}</td>
+            <td>{{config.title}}</td>
+            <td>{{config.description}}</td>
+            <td>{{config.domain}}</td>
+            <td>{{config.value}}</td>
+            <td *ngIf="authService.hasRole('Admin')">
+                <a *ngIf="authService.hasPermission('config-edit')" routerLink="editar/{{config.id}}"
+                    class="btn btn-sm btn-primary me-1">Editar</a>
+            </td>
+        </tr>
+        <tr *ngIf="!configs">
+            <td colspan="6" class="text-center">
+                <span class="spinner-border spinner-border-md align-center"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item" *ngFor="let link of links">
+            <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}" href="{{link.url}}"
+                (click)="onChangePagination($event)">{{link.label}}</a>
+        </li>
+    </ul>
+</nav>
+-->
+<div class="col-6 offset-3">
+    <div class="text-center">
+        <span *ngIf="!configs" class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+    <ul class="list-group" *ngIf="configs">
+        <li class="list-group-item">
+            <div class="config-list">
+                <span class="fw-bold">Nombre</span>
+                <span class="fw-bold">Título</span>
+                <span class="fw-bold">Descripción</span>
+                <span class="fw-bold">Dominio</span>
+                <span class="fw-bold">Valor</span>
+                <span class="fw-bold"></span>
+            </div>
+        </li>
+        <li class="list-group-item" *ngFor="let config of configs">
+            <div class="config-list">
+                <span>{{config.name}}</span>
+                <span>{{config.title}}</span>
+                <span>{{config.description}}</span>
+                <span>{{config.domain}}</span>
+                <span>{{config.value}}</span>
+                <td *ngIf="authService.hasRole('Admin')">
+                    <a *ngIf="authService.hasPermission('config-edit')" routerLink="editar/{{config.id}}"
+                        class="btn btn-sm btn-primary me-1">Editar</a>
+                </td>
+            </div>
+        </li>
+    </ul>
+</div>

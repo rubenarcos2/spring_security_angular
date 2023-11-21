@@ -1,0 +1,137 @@
+<div class="container">
+    <div *ngIf="isLoaded" class="col-6 offset-3">
+        <form [formGroup]="goodsReceiptForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="inputDocNum" class="form-label">Número de documento</label>
+                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputDocNum"
+                    formControlName="docnum">
+                <div class="form-text text-danger"
+                    *ngIf="goodsReceiptFormControls['docnum'].invalid && (goodsReceiptFormControls['docnum'].dirty || goodsReceiptFormControls['docnum'].touched)">
+                    <ng-container *ngIf="goodsReceiptFormControls['docnum'].errors?.['required']">
+                        Introduzca el número de documento del albarán de control de mercancías.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="twocolumns mb-3">
+                <div>
+                    <label for="inputSupplier" class="form-label">Proveedor</label>
+                    <div *ngIf="!suppliers">
+                        <div colspan="6" class="text-center">
+                            <span class="spinner-border spinner-border-sm align-center"></span>
+                        </div>
+                    </div>
+                    <div *ngIf="suppliers">
+                        <select (change)="onChangeSuppliers($event)" name="select-supplier" id="select-supplier"
+                            formControlName="idsupplier">
+                            <option *ngFor="let supplier of suppliers" value="{{supplier.id}}"
+                                id="supplier-{{supplier.id}}">
+                                {{supplier.cif_nif}} - {{supplier.name}}</option>
+                        </select>
+                        <div class="form-text text-danger"
+                            *ngIf="goodsReceiptFormControls['idsupplier'].invalid && (goodsReceiptFormControls['idsupplier'].dirty || goodsReceiptFormControls['idsupplier'].touched)">
+                            <ng-container *ngIf="goodsReceiptFormControls['idsupplier'].errors?.['required']">
+                                Introduzca un proveedor para el albarán de control de mercancías.
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="inputUser" class="form-label">Usuario</label>
+                    <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputUser"
+                        formControlName="username" readonly>
+                    <div class="form-text text-danger"
+                        *ngIf="goodsReceiptFormControls['iduser'].invalid && (goodsReceiptFormControls['iduser'].dirty || goodsReceiptFormControls['iduser'].touched)">
+                        <ng-container *ngIf="goodsReceiptFormControls['iduser'].errors?.['required']">
+                            Introduzca un usuario para el albarán de control de mercancías.
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="twocolumns mb-3">
+                <div>
+                    <label for="inputDate" class="form-label">Fecha</label>
+                    <input (change)="onChangeInput($event)" type="date" [max]="today" class="form-control"
+                        id="inputDate" formControlName="date">
+                    <div class="form-text text-danger"
+                        *ngIf="goodsReceiptFormControls['date'].invalid && (goodsReceiptFormControls['date'].dirty || goodsReceiptFormControls['date'].touched)">
+                        <ng-container *ngIf="goodsReceiptFormControls['date'].errors?.['required']">
+                            Introduzca una fecha de recepción del el albarán de control de mercancías.
+                        </ng-container>
+                        <ng-container *ngIf="goodsReceiptFormControls['date'].errors?.['invalidDate']">
+                            Introduzca una fecha inferior o igual al día de hoy.
+                        </ng-container>
+                    </div>
+                </div>
+                <div>
+                    <label for="inputTime" class="form-label">Hora</label>
+                    <input (change)="onChangeInput($event)" type="time" class="form-control" id="inputTime"
+                        formControlName="time">
+                    <div class="form-text text-danger"
+                        *ngIf="goodsReceiptFormControls['time'].invalid && (goodsReceiptFormControls['time'].dirty || goodsReceiptFormControls['time'].touched)">
+                        <ng-container *ngIf="goodsReceiptFormControls['time'].errors?.['required']">
+                            Introduzca una hora de recepción del albarán de control de mercancías.
+                        </ng-container>
+                        <ng-container *ngIf="goodsReceiptFormControls['time'].errors?.['pattern']">
+                            Introduzca una hora correcta.
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <table *ngIf="authService.hasPermission('goodsreceipt-list')" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let goodsReceiptProduct of goodsReceiptProducts">
+                        <td></td>
+                        <td>{{goodsReceiptProduct.nameproduct}}</td>
+                        <td>{{goodsReceiptProduct.quantity}} ud/s</td>
+                        <td>{{goodsReceiptProduct.price | currency: 'EUR'}}</td>
+                        <td>
+                            <button type="button" *ngIf="authService.hasPermission('goodsreceipt-delete')"
+                                (click)="deleteProduct(goodsReceiptProduct.nameproduct, goodsReceiptProduct.idproduct)"
+                                class="btn btn-sm btn-danger btn-delete-user"
+                                [disabled]="goodsReceiptProduct.isDeleting">
+                                <span *ngIf="!goodsReceiptProduct.isDeleting">Eliminar</span>
+                            </button>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <form *ngIf="products" class="mb-3" id="productForm" [formGroup]="goodsReceiptProductForm"
+                (ngSubmit)="onSubmitProduct()">
+                <select name="select-product" id="select-product" formControlName="idproduct">
+                    <option *ngFor="let product of products" value="{{product.id}}">
+                        {{product.name}}</option>
+                </select>
+                <div><input style="width: 3rem;" type="number" formControlName="quantity" min="1"
+                        oninput="validity.valid||(value='');" (change)="onChangeInputProduct($event)"> ud/s</div>
+                <div><input style="width: 4rem;" type="number" min="0.01" step="0.01" formControlName="price" min="1"> €
+                </div>
+                <button class="btn btn-primary btn-sm" type="submit"
+                    [disabled]="!goodsReceiptProductForm.valid">Añadir</button>
+                <a href="/productos/nuevo" class="btn btn-secondary">Nuevo</a>
+            </form>
+            <div *ngIf="products" class="onerow mb-3">
+                <h6>Precio estimado prod. y cant. (IA):</h6>
+                <div id="priceEst" style="width: 4rem;"></div>
+            </div>
+            <button type="submit" class="btn btn-primary"
+                [disabled]="(!goodsReceiptForm.valid || !goodsReceiptProductForm.valid) || !isSubmitted">Enviar</button>
+        </form>
+    </div>
+</div>
+<div *ngIf="!isLoaded">
+    <div colspan="6" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+</div>

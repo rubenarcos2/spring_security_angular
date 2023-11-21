@@ -1,0 +1,87 @@
+.help-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 40px;
+  overflow: auto;
+}
+
+.help-modal-body {
+  position: relative;
+  margin: 0 auto;
+  top: 10%;
+  width: 50%;
+  height: auto;
+  padding: 20px;
+  border-radius: 0.5rem;
+  background: var(--color-yellow-light);
+}
+
+video {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-gray-meddium);
+}
+
+.close {
+  position: absolute;
+  top: 0px;
+  right: 9px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
+body.help-modal-open {
+  overflow: hidden;
+}
+
+h1 {
+  text-align: center;
+}
+
+@media screen and (max-width: 980px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .help-modal {
+    padding: 10px;
+  }
+
+  .help-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .help-modal {
+    padding: 10px;
+  }
+
+  .help-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .help-modal {
+    padding: 10px;
+  }
+
+  .help-modal-body {
+    width: 90%;
+    height: auto;
+  }
+}

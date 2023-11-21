@@ -1,0 +1,54 @@
+<div class="container">
+    <div *ngIf="config" class="col-6 offset-3">
+        <form [formGroup]="configForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="inputName" class="form-label">Nombre</label>
+                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputName"
+                    formControlName="name" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="inputTitle" class="form-label">Título</label>
+                <input type="text" class="form-control" id="inputTitle" formControlName="title">
+                <div class="form-text text-danger"
+                    *ngIf="configFormControls['title'].invalid && (configFormControls['title'].dirty || configFormControls['title'].touched)">
+                    <ng-container *ngIf="configFormControls['title'].errors?.['required']">
+                        Introduzca un título para la configuración.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputDescription" class="form-label">Descripción</label>
+                <textarea (change)="onChangeInput($event)" class="form-control" id="inputDescription"
+                    formControlName="description"></textarea>
+                <div class="form-text text-danger"
+                    *ngIf="configFormControls['description'].invalid && (configFormControls['description'].dirty || configFormControls['description'].touched)">
+                    <ng-container *ngIf="configFormControls['description'].errors?.['required']">
+                        Introduzca una descripción para la configuración.
+                    </ng-container>
+                    <ng-container *ngIf="configFormControls['description'].errors?.['minlength']">
+                        La descripción debe tener al menos 3 caracteres
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputDomain" class="form-label">Dominio</label>
+                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputDomain"
+                    formControlName="domain" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="inputValue" class="form-label">Valor</label>
+                &nbsp;&nbsp;
+                <span class="form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="inputValue"
+                        (change)="onChangeInput($event)" id="inputValue" formControlName="value">
+                </span>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!configForm.valid || !isSubmitted">Enviar</button>
+        </form>
+    </div>
+</div>
+<div *ngIf="!config">
+    <div colspan="6" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+</div>

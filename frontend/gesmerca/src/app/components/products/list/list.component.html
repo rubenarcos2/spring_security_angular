@@ -1,0 +1,62 @@
+<h1 class="text-center">Productos</h1>
+<div *ngIf="authService.hasPermission('product-create')" class="text-center" style="padding: 15px">
+    <a routerLink="nuevo" class="btn btn-sm btn-success mb-2">Crear producto</a>
+</div>
+<div id="search-report">
+    <div>
+        <input type="text" placeholder="Nombre, desc, precio, stock..." #filter>
+        <button class="primary" type="button" (click)="search(filter.value, $event)">
+            <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
+            <span *ngIf="!isSearching">Buscar</span>
+        </button>
+    </div>
+    <button id="report-pdf" class="btn-secondary btn-sm mb-2" (click)="productsToPDF()" [disabled]="isPrintingPDF">
+        <span *ngIf="isPrintingPDF" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!isPrintingPDF">Descargar informe PDF</span></button>
+</div>
+<table *ngIf="authService.hasPermission('product-list')" class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th *ngIf="authService.hasPermission('product-edit') && authService.hasPermission('product-delete')"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of products">
+            <td style="text-align: center;"><img class="spinner-border spinner-border-sm align-center"
+                    (load)="onLoadImg($event)" src="{{product.thumbail_32x32}}" width="auto" height="32"
+                    alt="Imagen de un {{product.name}}"></td>
+            <td>{{product.name}}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.price | currency: 'EUR'}}</td>
+            <td>{{product.stock}}</td>
+            <td *ngIf="authService.hasPermission('product-edit') && authService.hasPermission('product-delete')">
+                <a *ngIf="authService.hasPermission('product-edit')" routerLink="editar/{{product.id}}"
+                    class="btn btn-sm btn-primary me-1">Editar</a>
+                <button *ngIf="authService.hasPermission('product-delete')"
+                    (click)="deleteProduct(product.name, product.id)" class="btn btn-sm btn-danger btn-delete-user"
+                    [disabled]="product.isDeleting">
+                    <span *ngIf="" class="spinner-border spinner-border-sm"></span>
+                    <span *ngIf="!product.isDeleting">Eliminar</span>
+                </button>
+            </td>
+        </tr>
+        <tr *ngIf="!products">
+            <td colspan="6" class="text-center">
+                <span class="spinner-border spinner-border-md align-center"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item" *ngFor="let link of links">
+            <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}" href="{{link.url}}"
+                (click)="onChangePagination($event)">{{link.label}}</a>
+        </li>
+    </ul>
+</nav>

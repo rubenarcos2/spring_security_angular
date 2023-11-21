@@ -1,0 +1,66 @@
+.container {
+  display: grid;
+  grid-template-columns: 25% auto;
+}
+
+.image {
+  padding-top: 2rem;
+  justify-self: right;
+}
+
+.image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.multicolumns {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+}
+
+.multicolumns div div {
+  display: flex;
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mb-3 {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+
+  .multicolumns {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mb-3 {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+    grid-template-columns: 3rem 5rem auto 3rem;
+  }
+
+  .multicolumns {
+    display: flex;
+    flex-direction: column;
+  }
+}

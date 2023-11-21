@@ -1,0 +1,44 @@
+<h2 style="text-align: center;"></h2>
+<h5 style="text-align: center;"></h5>
+<div class="col-6 offset-3">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="userName" class="form-label">Usuario</label>
+      <input type="text" class="form-control" id="userName" formControlName="userName" autocomplete="username">
+      <div class="form-text text-danger"
+        *ngIf="loginFormControls['userName'].invalid && (loginFormControls['userName'].dirty || loginFormControls['userName'].touched)">
+        <ng-container *ngIf="loginFormControls['userName'].errors?.['required']">
+          Introduzca una dirección de email.
+        </ng-container>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputPassword" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="inputPassword" formControlName="password"
+        autocomplete="current-password">
+      <div class="form-text text-danger"
+        *ngIf="loginFormControls['password'].invalid && (loginFormControls['password'].dirty || loginFormControls['password'].touched)">
+        <ng-container *ngIf="loginFormControls['password'].errors?.['required']">
+          Introduzca su contraseña.
+        </ng-container>
+        <ng-container *ngIf="loginFormControls['password'].errors?.['minlength']">
+          La contraseña debe tener al menos 6 caracteres
+        </ng-container>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || isSubmitted">Enviar</button>
+  </form>
+</div>
+<div style="text-align: center;">
+  <h3>Rol de Administrador</h3>
+  <p>Uss : admin&#64;admin.com</p>
+  <p>Pass: administrador</p>
+  <br>
+  <h3>Rol de Empleado</h3>
+  <p>Uss : employee&#64;employee.com</p>
+  <p>Pass: empleado</p>
+  <br>
+  <h3>Rol de Usuario</h3>
+  <p>Uss : user&#64;user.com</p>
+  <p>Pass: usuario</p>
+</div>

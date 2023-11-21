@@ -1,0 +1,14 @@
+<div class="help-modal">
+    <div class="help-modal-body">
+        <h1 id="help-title">Ayuda</h1>
+        <video id="help-video" controls="true" preload="metadata" autoplay controlsList="nodownload"
+            oncontextmenu="return false;">
+            <source src="{{webmurl}}" type="video/webm" />
+            <source src="{{mp4url}}" type="video/mp4" />
+            <!--<p>Su navegador no soporta vídeos HTML5.</p>-->
+        </video>
+        <a class="close" (click)="helpService.close();"><img src="../../assets/img/close-window.png"
+                alt="Cerrar Ayuda"></a>
+        <ng-content></ng-content>
+    </div>
+</div>

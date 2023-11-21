@@ -1,0 +1,31 @@
+<div class="col-6 offset-3">
+    <div class="text-center">
+        <span *ngIf="!users && !permissions" class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+    <ul class="list-group" *ngIf="users && permissions">
+        <li class="list-group-item">
+            <div class="permissions-list">
+                <span class="fw-bold">Usuario</span>
+                <span class="fw-bold">Permisos</span>
+                <span class="fw-bold"></span>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="permissions-list">
+                <select name="select-roles" id="select-user" (change)="selectPermissionOfCmbUser()" disabled>
+                    <option *ngFor="let user of users" value="user-{{user.id}}" id="user-{{user.id}}">
+                        {{user.name}}</option>
+                </select>
+                <div>
+                    <div *ngFor="let permission of permissions">
+                        <input type="checkbox" id="chk-{{permission.id}}" name="chk-{{permission.id}}"
+                            value="{{permission.permissionName}}" disabled>
+                        <label for="chk-{{permission.id}}">&nbsp;{{permission.permissionName}}</label>
+                    </div>
+                </div>
+                <button id="btn-save" (click)="updatePermissions($event)" class="btn btn-sm btn-primary"
+                    disabled>Guardar</button>
+            </div>
+        </li>
+    </ul>
+</div>

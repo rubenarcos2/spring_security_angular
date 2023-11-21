@@ -1,0 +1,105 @@
+<header class="mb-4">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/"><img src="../../assets/img/icons/gesmerca.png" class="logo"
+          alt="GesMerCa">GesMerCa</a>
+      <button class=" navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item" title="Productos">
+            <a *ngIf="authService.isLoggedIn && authService.hasPermission('product-list')" [routerLink]="['/productos']"
+              [routerLinkActive]="'active'" class="nav-link"><img src="../../assets/img/icons/products.png" width="32"
+                height="32" alt="Productos">
+              Productos</a>
+          </li>
+          <li class="nav-item" title="Proveedores">
+            <a *ngIf="authService.isLoggedIn && authService.hasPermission('supplier-list')"
+              [routerLink]="['/proveedores']" [routerLinkActive]="'active'" class="nav-link"><img
+                src="../../assets/img/icons/suppliers.png" width="32" height="32" alt="Proveedores">
+              Proveedores</a>
+          </li>
+          <li class="nav-item" title="Recepción de mercancía">
+            <a *ngIf="authService.isLoggedIn && authService.hasPermission('goodsreceipt-list')"
+              [routerLink]="['/recepcion']" [routerLinkActive]="'active'" class="nav-link"><img
+                src="../../assets/img/icons/goodsreceipt.png" width="32" height="32" alt="Recepción de mercancía">
+              Recepción de mercancía</a>
+          </li>
+          <li class="nav-item" title="Configuración">
+            <a *ngIf="authService.isLoggedIn && authService.hasRole('Admin')" [routerLink]="['/config/general']"
+              [routerLinkActive]="'active'" class="nav-link"><img src="../../assets/img/icons/settings.png" width="32"
+                height="32" alt="Configuración"> Configuración</a>
+          </li>
+          <li class="nav-item" title="Roles">
+            <a *ngIf="authService.isLoggedIn && authService.hasRole('Admin')" [routerLink]="['/roles']"
+              [routerLinkActive]="'active'" class="nav-link"><img src="../../assets/img/icons/security.png" width="32"
+                height="32" alt="Roles"> Roles</a>
+          </li>
+          <li class="nav-item" title="Permisos">
+            <a *ngIf="authService.isLoggedIn && authService.hasRole('Admin')" [routerLink]="['/permisos']"
+              [routerLinkActive]="'active'" class="nav-link"><img src="../../assets/img/icons/signin.png" width="32"
+                height="32" alt="Permisos"> Permisos</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown" *ngIf="authService.isLoggedIn" [routerLinkActive]="'active'"
+              title="Opciones de usuario">
+              <span *ngIf="!this.authService.user" class="spinner-border spinner-border-sm align-center"></span>
+              <a class="nav-link dropdown-toggle" *ngIf="this.authService.user" href="#" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false"><img src="../../assets/img/icons/login.png" width="32"
+                  height="32" alt="{{this.authService.user.name}}">
+                {{this.authService.user.name}}
+              </a>
+              <ul class="dropdown-menu">
+                <li title="Configuración">
+                  <a *ngIf="authService.isLoggedIn" [routerLink]="['/config']" [routerLinkActive]="'active'"
+                    [routerLinkActiveOptions]="{exact: true}" class="dropdown-item"><img
+                      src="../../assets/img/icons/settings.png" width="24" height="24" alt="Configuración">
+                    Configuración</a>
+                </li>
+                <li title="Fullscreen"><a (click)="onFullscreen($event)" class="dropdown-item" href="#"><img
+                      src="../../assets/img/icons/fullscreen.png" width="24" height="24" alt="Fullscreen">
+                    Fullscreen</a></li>
+                <li title="Mis datos"><a class="dropdown-item" href="javascript:;" *ngIf="authService.isLoggedIn"
+                    [routerLink]="['/perfil']" [routerLinkActive]="'active'"><img
+                      src="../../assets/img/icons/security.png" width="24" height="24" alt="Mis datos"> Mis datos</a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li title="Cerrar sesión"><a class="dropdown-item" *ngIf="authService.isLoggedIn" href="javascript:;"
+                    (click)="handleLogout()"><img src="../../assets/img/icons/logout.png" width="24" height="24"
+                      alt="Cerrar sesión">Cerrar sesión</a></li>
+              </ul>
+            </li>
+            <li class="nav-item" title="Iniciar sesión">
+              <a *ngIf="!authService.isLoggedIn" [routerLink]="['/login']" [routerLinkActive]="'active'"
+                [routerLinkActiveOptions]="{exact: true}" class="nav-link"><img src="../../assets/img/icons/login.png"
+                  width="32" height="32" alt="Iniciar sesión"> Iniciar sesión</a>
+            </li>
+            <li class="nav-item" title="Registrarse">
+              <a *ngIf="!authService.isLoggedIn" [routerLink]="['/registro']" [routerLinkActive]="'active'"
+                class="nav-link"><img src="../../assets/img/icons/signin.png" width="32" height="32" alt="Registrarse">
+                Registrarse</a>
+            </li>
+            <li class="nav-item" title="Ayuda (F2)">
+              <a class="nav-link" (click)="helpService.open('help-modal')" id="btn-help"><img
+                  src="../../assets/img/icons/help.png" width="32" height="32" alt="Ayuda"></a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+  <nav id="breadcrumb-nav" aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-dividers-chevron">
+    </ol>
+  </nav>
+</header>
+
+<help id="help-modal"></help>
+<checkSession id="checkSession-modal"></checkSession>

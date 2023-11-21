@@ -1,0 +1,58 @@
+body{
+    font-family: 'Ubuntu Light' !important;
+}
+
+section article {
+    display:grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    align-items:center;
+    margin: 1rem;
+}
+
+section article > div{
+    border: 1px solid var(--color-gray-light);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem;
+    display: grid;
+    grid-template-rows: 128px auto;
+    text-align: center;
+}
+
+section article > div div:nth-child(2){ /* Product text*/
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+section article > div div:nth-child(4){ /* Price text*/
+    font-size: 1.25rem;
+}
+
+section article img{
+    width: auto;
+    height: 128px;
+}
+
+@media screen and (max-width:980px) {
+    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+
+    section article {
+        grid-template-columns: auto auto auto;
+    }
+}
+
+@media screen and (max-width:720px) {
+    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+
+    section article {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media screen and (max-width:480px) {
+    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+
+    section article {
+        grid-template-columns: auto;
+    }
+}

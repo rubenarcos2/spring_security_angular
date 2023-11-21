@@ -1,0 +1,28 @@
+.list-group {
+  padding: 0px;
+  margin-left: -25%;
+  margin-right: -25%;
+}
+
+@media screen and (max-width: 980px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+}
+
+@media screen and (max-width: 720px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+  .list-group {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* We indicate how my mock-up will be structured for devices smaller than 768px*/
+
+  .list-group {
+    padding: 0px;
+    margin-left: -50%;
+    margin-right: -50%;
+  }
+}

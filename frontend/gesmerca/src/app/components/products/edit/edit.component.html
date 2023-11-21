@@ -1,0 +1,127 @@
+<div class="container">
+    <div class="image">
+        <img *ngIf="product" (load)="onLoadImg($event)" class="spinner-border" src="{{product.image}}"
+            alt="Imagen de un {{product.name}}">
+    </div>
+    <div *ngIf="product" class="col-6 offset-3">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="inputName" class="form-label">Nombre</label>
+                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputName"
+                    formControlName="name">
+                <div class="form-text text-danger"
+                    *ngIf="productFormControls['name'].invalid && (productFormControls['name'].dirty || productFormControls['name'].touched)">
+                    <ng-container *ngIf="productFormControls['name'].errors?.['required']">
+                        Introduzca un nombre para el producto.
+                    </ng-container>
+                    <ng-container *ngIf="productFormControls['name'].errors?.['minlength']">
+                        El nombre debe tener al menos 3 caracteres
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputDescription" class="form-label">Descripción</label>
+                <textarea (change)="onChangeInput($event)" class="form-control" id="inputDescription"
+                    formControlName="description"></textarea>
+                <div class="form-text text-danger"
+                    *ngIf="productFormControls['description'].invalid && (productFormControls['description'].dirty || productFormControls['description'].touched)">
+                    <ng-container *ngIf="productFormControls['description'].errors?.['required']">
+                        Introduzca una descripción para el producto.
+                    </ng-container>
+                    <ng-container *ngIf="productFormControls['description'].errors?.['minlength']">
+                        La descripción debe tener al menos 3 caracteres
+                    </ng-container>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputSupplier" class="form-label">Proveedor</label>
+                <!--<input (change)="onChangeInput($event)" class="form-control" id="inputSupplier"
+                    formControlName="supplier">-->
+                <div>
+                    <select name="select-supplier" id="select-supplier" formControlName="supplier"
+                        (change)="onChangeInput($event)">
+                        <option *ngFor="let supplier of suppliers" value="{{supplier.id}}" id="supplier-{{supplier.id}}"
+                            [selected]="supplier.id == product.supplier">
+                            {{supplier.cif_nif}} - {{supplier.name}}</option>
+                    </select>
+                    &nbsp;
+                    <a href="./proveedores/editar/{{product.supplier}}"><img src="../../assets/img/icons/suppliers.png"
+                            width="32px" height="32px" alt="Ver datos del proveedor"
+                            title="Ver datos del proveedor"></a>
+                    <div class="form-text text-danger"
+                        *ngIf="productFormControls['supplier'].invalid && (productFormControls['supplier'].dirty || productFormControls['supplier'].touched)">
+                        <ng-container *ngIf="productFormControls['supplier'].errors?.['required']">
+                            Introduzca un proveedor para el producto.
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="inputImage" class="form-label">Imagen</label>
+                <input (change)="onChangeFile($event)" type="file" class="form-control" id="inputImage"
+                    formControlName="image">
+                <div class="form-text text-danger"
+                    *ngIf="productFormControls['image'].invalid && (productFormControls['image'].dirty || productFormControls['image'].touched)">
+                    <ng-container *ngIf="productFormControls['image'].errors?.['required']">
+                        Introduzca una imagen del producto.
+                    </ng-container>
+                </div>
+            </div>
+            <div class="multicolumns mb-3">
+                <div>
+                    <label for="inputPrice" class="form-label">Precio</label>
+                    <div><input (change)="onChangeInput($event)" type="text" class="form-control" id="inputPrice"
+                            formControlName="price" type="number" min="0.01" step="0.01">€</div>
+                    <div class="form-text text-danger"
+                        *ngIf="productFormControls['price'].invalid && (productFormControls['price'].dirty || productFormControls['price'].touched)">
+                        <ng-container *ngIf="productFormControls['price'].errors?.['required']">
+                            Introduzca un precio del producto.
+                        </ng-container>
+                        <ng-container *ngIf="productFormControls['price'].errors?.['pattern']">
+                            Introduzca un valor numérico para el precio (Ej: 9,99).
+                        </ng-container>
+                    </div>
+                </div>
+                <div>
+                    <label for="inputPriceMin" class="form-label">Precio Mín.</label>
+                    <div><input (change)="onChangeInput($event)" type="text" class="form-control" id="inputPriceMin"
+                            formControlName="priceMin" type="number" min="0.01" step="0.01" readonly>€</div>
+                </div>
+                <div>
+                    <label for="inputPriceMax" class="form-label">Precio Máx.</label>
+                    <div><input (change)="onChangeInput($event)" type="text" class="form-control" id="inputPriceMax"
+                            formControlName="priceMax" type="number" min="0.01" step="0.01" readonly>€</div>
+                </div>
+                <div>
+                    <label for="inputPriceAvg" class="form-label">Precio Medio</label>
+                    <div><input (change)="onChangeInput($event)" type="number" min="0.01" step="0.01"
+                            class="form-control" id="inputPriceAvg" formControlName="priceAvg" readonly>€</div>
+                </div>
+                <div>
+                    <label for="inputStock" class="form-label">Stock</label>
+                    <div><input (change)="onChangeInput($event)" type="text" class="form-control" id="inputStock"
+                            formControlName="stock">ud/s</div>
+                    <div class="form-text text-danger"
+                        *ngIf="productFormControls['stock'].invalid && (productFormControls['stock'].dirty || productFormControls['stock'].touched)">
+                        <ng-container *ngIf="productFormControls['stock'].errors?.['required']">
+                            Introduzca el stock actual del producto.
+                        </ng-container>
+                        <ng-container *ngIf="productFormControls['stock'].errors?.['pattern']">
+                            Introduzca un valor numérico (Ej: 99).
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h6>* Precio estimado de la próxima compra mediante IA</h6>
+            </div>
+            <button type="submit" class="btn btn-primary"
+                [disabled]="!productForm.valid || !isSubmitted">Enviar</button>
+        </form>
+    </div>
+</div>
+<div *ngIf="!product">
+    <div colspan="6" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+</div>
