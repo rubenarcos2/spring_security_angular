@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://vps.rarcos.com:10448/" target="_blank">
-        <img src="./src/assets/img/icons/gesmerca.png" alt="GesMerCa Logo">
+        <img src="./frontend/gesmerca/src/assets/img/icons/gesmerca.png" alt="GesMerCa Logo">
     </a>
     <a href="https://angular.io/" target="_blank">
         <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" width=150 alt="Angular Logo">
@@ -9,7 +9,7 @@
 
 <p align="center"><a href="https://vps.rarcos.com:10448/" target="_blank">Try the demo online</a></p>
 
-# Angular
+# Frontend - Angular
 
 ## How to run it locally
 
@@ -42,3 +42,22 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+# Backend - Spring Boot
+
+## Requirements
+
+For building and running the application you need:
+
+- [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- [Maven 3](https://maven.apache.org)
+
+## Running the application locally
+
+There are several ways to run a Spring Boot application on your local machine. One way is to execute the `main` method in the `gesmerca\backend\gesmerca\src\main\java\com\rarcos\gesmerca\GesMerCaApplication.java` class from your IDE.
+
+Alternatively you can use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:
+
+```shell
+mvn spring-boot:run
+```
