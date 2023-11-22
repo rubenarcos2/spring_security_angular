@@ -15,15 +15,15 @@
         </li>
         <li class="list-group-item" *ngFor="let config of configs">
             <div class="config-list">
-                <span><input type="checkbox" [checked]="config.pivot !== undefined ? true : false"
+                <span><input type="checkbox" [checked]="config !== undefined ? true : false"
                         (change)="onChangeCheckActive($event)" id="check-{{config.name}}" /></span>
                 <span>{{config.title}}</span>
-                <textarea *ngIf="config.pivot; else elseBlock" id="desc-{{config.name}}"
-                    value="{{config.pivot.description}}"></textarea>
+                <textarea *ngIf="config; else elseBlock" id="desc-{{config.name}}"
+                    value="{{config.description}}"></textarea>
                 <ng-template #elseBlock><span id="desc-{{config.name}}">{{config.description}}</span></ng-template>
                 <span class="form-switch">
-                    <input *ngIf="config.pivot; else elseBlock2" class="form-check-input" type="checkbox" role="switch"
-                        id="switch-{{config.name}}" [checked]="config.pivot.value === 'true' ? true : false"
+                    <input *ngIf="config; else elseBlock2" class="form-check-input" type="checkbox" role="switch"
+                        id="switch-{{config.name}}" [checked]="config.value === 'true' ? true : false"
                         (change)="onChangeCheckValue($event)">
                     <ng-template #elseBlock2>
                         <input class="form-check-input" type="checkbox" role="switch" id="switch-{{config.name}}"

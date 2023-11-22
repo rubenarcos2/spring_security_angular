@@ -139,10 +139,12 @@ export class ConfigListComponent implements OnInit, OnDestroy {
   mixConfigsSpecifyWithGeneral(): void {
     this._configsGeneral.forEach(configGeneral => {
       let exist = false;
-      this._configs.forEach(config => {
-        if (config.name === configGeneral.name) exist = true;
-      });
-      if (!exist) this.configs.push(configGeneral);
+      if (this.configs) {
+        this.configs.forEach(config => {
+          if (config.name === configGeneral.name) exist = true;
+        });
+        if (!exist) this.configs.push(configGeneral);
+      }
     });
   }
 

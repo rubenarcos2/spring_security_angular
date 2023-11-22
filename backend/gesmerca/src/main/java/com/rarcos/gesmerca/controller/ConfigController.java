@@ -77,17 +77,12 @@ public class ConfigController {
     @GetMapping("/user/{id}")
     public ResponseEntity<Object> getByUserId(@PathVariable("id") Long id) {
         List<UserConfigDto> userConfigDtosList = new ArrayList<>();
-        if (configService.getConfigsOfUserId(id).isEmpty())
-            return new ResponseEntity<>(new Message("No existe una configuración para el usuario dado"),
-                    HttpStatus.NOT_FOUND);
-        else {
-            List<UserConfig> userConfigsList = configService.getConfigsOfUserId(id);
-            for (UserConfig userConfig : userConfigsList) {
-                UserConfigDto userConfigDto = new UserConfigDto(userConfig.getId(), userConfig.getConfig().getName(),
-                        userConfig.getValue(), userConfig.getConfig().getTitle(), userConfig.getDescription(),
-                        userConfig.getConfig().getDomain(), userConfig.getUser().getId());
-                userConfigDtosList.add(userConfigDto);
-            }
+        List<UserConfig> userConfigsList = configService.getConfigsOfUserId(id);
+        for (UserConfig userConfig : userConfigsList) {
+            UserConfigDto userConfigDto = new UserConfigDto(userConfig.getId(), userConfig.getConfig().getName(),
+                    userConfig.getValue(), userConfig.getConfig().getTitle(), userConfig.getDescription(),
+                    userConfig.getConfig().getDomain(), userConfig.getUser().getId());
+            userConfigDtosList.add(userConfigDto);
         }
         return new ResponseEntity<>(userConfigDtosList, HttpStatus.OK);
     }

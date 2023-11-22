@@ -20,7 +20,6 @@ export class AuthService {
         sessionStorage.setItem('authUser', JSON.stringify(result));
         let token: String = JSON.stringify(result);
         let decodedJWT = JSON.parse(window.atob(token.split('.')[1]));
-        console.log(decodedJWT.id);
         data.id = decodedJWT.id;
         data.name = decodedJWT.name;
         data.roles = decodedJWT.roles;
@@ -48,7 +47,6 @@ export class AuthService {
     return this.http.get(`${this._baseUrl}/auth/user-profile`).pipe(
       map(result => {
         let res = JSON.parse(JSON.stringify(result));
-        console.log(res);
         this._user = res.user;
         this._user.roles = res.roles;
         this._user.permissions = res.permissions;
@@ -87,7 +85,7 @@ export class AuthService {
     //if (this.user !== undefined) return this._user.permissions?.find(p => p.name == permission);
     //else return false;
     return JSON.parse(sessionStorage.getItem('permissionUser') as string)?.find(
-      (p: { name: string }) => p.name == permission
+      (p: { permissionName: string }) => p.permissionName == permission
     );
   }
 

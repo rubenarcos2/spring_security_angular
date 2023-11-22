@@ -15,7 +15,8 @@ export class ConfigService {
   getAll() {
     return this.http.get<Config[]>(`${this.baseUrl}/config`).pipe(
       map(result => {
-        if (String(result) != '[]') sessionStorage.setItem('generalConfig', JSON.stringify(result));
+        if (JSON.stringify(result) != '[]')
+          sessionStorage.setItem('generalConfig', JSON.stringify(result));
         return result;
       })
     );
@@ -24,7 +25,8 @@ export class ConfigService {
   getAllConfigsOfUser(id: any) {
     return this.http.get<Config[]>(`${this.baseUrl}/config/user/${id}`).pipe(
       map(result => {
-        if (String(result) != '[]') sessionStorage.setItem('userConfig', JSON.stringify(result));
+        if (JSON.stringify(result) != '[]')
+          sessionStorage.setItem('userConfig', JSON.stringify(result));
         return result;
       })
     );
@@ -71,7 +73,7 @@ export class ConfigService {
   hasUserConfig(config: string) {
     let userConfigs: Config[] = JSON.parse(sessionStorage.getItem('userConfig') as string);
     let userConfig: Config = userConfigs?.filter(conf => conf.name == config)[0];
-    return userConfig?.pivot.value;
+    return userConfig?.value;
   }
 
   get isUserConfigLoaded() {
