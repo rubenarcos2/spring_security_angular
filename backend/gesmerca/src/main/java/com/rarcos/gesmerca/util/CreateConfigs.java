@@ -1,9 +1,12 @@
 package com.rarcos.gesmerca.util;
 
 import com.rarcos.gesmerca.entity.Config;
+import com.rarcos.gesmerca.entity.UserConfig;
+import com.rarcos.gesmerca.security.service.UserService;
 import com.rarcos.gesmerca.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,10 +16,14 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Order(3)
 public class CreateConfigs implements CommandLineRunner {
 
     @Autowired
     ConfigService configService;
+
+    @Autowired
+    UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -25,5 +32,9 @@ public class CreateConfigs implements CommandLineRunner {
         Config config2 = new Config("tts", "false", "Texto a voz", "Lee en voz alta todos los textos", "True/False");
         configService.save(config);
         configService.save(config2);
+
+        UserConfig userConfig = new UserConfig(userService.getByNombreUsuario("employee").get(), config, "true",
+                "Alto contraste para empleados");
+        configService.save(userConfig);
     }
 }

@@ -1,7 +1,5 @@
 package com.rarcos.gesmerca.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,6 +53,10 @@ public class ConfigService {
 
     public void save(Config product) {
         configRepository.save(product);
+    }
+
+    public void save(UserConfig userConfig) {
+        userConfigRepository.save(userConfig);
     }
 
     public void delete(Long id) {

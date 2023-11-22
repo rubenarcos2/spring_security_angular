@@ -26,8 +26,7 @@ public class UserConfig {
     public UserConfig() {
     }
 
-    public UserConfig(Long id, User user, Config config, String value, String description) {
-        this.id = id;
+    public UserConfig(User user, Config config, String value, String description) {
         this.user = user;
         this.config = config;
         this.value = value;
@@ -36,10 +35,6 @@ public class UserConfig {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getUser() {

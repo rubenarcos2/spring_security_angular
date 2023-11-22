@@ -1,5 +1,6 @@
 package com.rarcos.gesmerca.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.dto.Message;
+import com.rarcos.gesmerca.dto.UserConfigDto;
 import com.rarcos.gesmerca.dto.ConfigDto;
 import com.rarcos.gesmerca.entity.Config;
+import com.rarcos.gesmerca.entity.UserConfig;
 import com.rarcos.gesmerca.service.ConfigService;
 
 import io.micrometer.common.util.StringUtils;
@@ -69,5 +72,23 @@ public class ConfigController {
         config.setTitle(configDto.getTitle());
         configService.save(config);
         return new ResponseEntity<>(new Message("La configuración se ha actualizado correctamente"), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Object> getByUserId(@PathVariable("id") Long id) {
+        List<UserConfigDto> userConfigDtosList = new ArrayList<>();
+        if (configService.getConfigsOfUserId(id).isEmpty())
+            return new ResponseEntity<>(new Message("No existe una configuración para el usuario dado"),
+                    HttpStatus.NOT_FOUND);
+        else {
+            List<UserConfig> userConfigsList = configService.getConfigsOfUserId(id);
+            for (UserConfig userConfig : userConfigsList) {
+                UserConfigDto userConfigDto = new UserConfigDto(userConfig.getId(), userConfig.getConfig().getName(),
+                        userConfig.getValue(), userConfig.getConfig().getTitle(), userConfig.getDescription(),
+                        userConfig.getConfig().getDomain(), userConfig.getUser().getId());
+                userConfigDtosList.add(userConfigDto);
+            }
+        }
+        return new ResponseEntity<>(userConfigDtosList, HttpStatus.OK);
     }
 }
