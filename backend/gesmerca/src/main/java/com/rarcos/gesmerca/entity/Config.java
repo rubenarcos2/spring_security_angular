@@ -9,13 +9,13 @@ import jakarta.persistence.Id;
 public class Config {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String name;
     private String value;
     private String title;
     private String description;
     private String domain;
-    
+
     public Config() {
     }
 
@@ -27,7 +27,7 @@ public class Config {
         this.domain = domain;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
@@ -71,5 +71,4 @@ public class Config {
         this.domain = domain;
     }
 
-    
 }

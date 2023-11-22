@@ -1,3 +1,5 @@
+# [Working in progress]
+
 <p align="center">
     <a href="https://vps.rarcos.com:10448/" target="_blank">
         <img src="./frontend/gesmerca/src/assets/img/icons/gesmerca.png" alt="GesMerCa Logo">
@@ -25,7 +27,6 @@ $ git clone https://github.com/rubenarcos2/proyecto_daw.git
 ```
 
 2. Go to directory `cd frontend/gesmerca` inside:
-
 3. Run `npm install` inside the downloaded/cloned folder:
 
 ```bash
