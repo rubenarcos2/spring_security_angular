@@ -12,6 +12,7 @@ public class ProductDto {
     private String description;
     private Long supplier;
     private String image;
+    private String thumbail_32x32;
     private String thumbail_64x64;
     private String thumbail_128x128;
     @Min(value = 0, message = "El precio del producto debe ser mayor a 0")
@@ -25,7 +26,7 @@ public class ProductDto {
     }
 
     public ProductDto(@NotNull(message = "El producto debe tener un nombre") String name, String description,
-            Long supplier, String image, String thumbail_64x64, String thumbail_128x128,
+            Long supplier, String image, String thumbail_32x32, String thumbail_64x64, String thumbail_128x128,
             @Min(value = 0, message = "El precio del producto debe ser mayor a 0") Float price,
             @Min(value = -1, message = "El stock del producto no debe ser negativo") int stock, ZonedDateTime createdAt,
             ZonedDateTime updatedAt) {
@@ -33,6 +34,7 @@ public class ProductDto {
         this.description = description;
         this.supplier = supplier;
         this.image = image;
+        this.thumbail_32x32 = thumbail_32x32;
         this.thumbail_64x64 = thumbail_64x64;
         this.thumbail_128x128 = thumbail_128x128;
         this.price = price;
@@ -71,6 +73,14 @@ public class ProductDto {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getThumbail_32x32() {
+        return thumbail_32x32;
+    }
+
+    public void setThumbail_32x32(String thumbail_32x32) {
+        this.thumbail_32x32 = thumbail_32x32;
     }
 
     public String getThumbail_64x64() {

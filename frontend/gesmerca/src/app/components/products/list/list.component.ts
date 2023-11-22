@@ -37,7 +37,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     //Get all products of backend
     this.subs = this.productService
-      .getAll()
+      .getAll('')
       .pipe(first())
       .subscribe({
         next: result => {

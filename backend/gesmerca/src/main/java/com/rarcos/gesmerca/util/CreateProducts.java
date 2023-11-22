@@ -27,6 +27,7 @@ public class CreateProducts implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Product product = new Product("Producto 1", "Descripción del producto 1", Long.valueOf(7),
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299.png",
+                "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_32x32.png",
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_64x64.png",
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_128x128.png",
                 (float) 72.85,

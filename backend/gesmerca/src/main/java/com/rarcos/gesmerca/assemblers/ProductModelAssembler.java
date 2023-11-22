@@ -30,6 +30,7 @@ public class ProductModelAssembler extends RepresentationModelAssemblerSupport<P
         productModel.setPrice(product.getPrice());
         productModel.setStock(product.getStock());
         productModel.setSupplier(product.getSupplier());
+        productModel.setThumbail_32x32(product.getThumbail_32x32());
         productModel.setThumbail_64x64(product.getThumbail_64x64());
         productModel.setThumbail_128x128(product.getThumbail_128x128());
         productModel.setCreatedAt(product.getCreatedAt());

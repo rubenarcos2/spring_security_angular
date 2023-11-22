@@ -22,6 +22,7 @@ public class Product {
     private String description;
     private Long supplier;
     private String image;
+    private String thumbail_32x32;
     private String thumbail_64x64;
     private String thumbail_128x128;
     private float price;
@@ -37,13 +38,14 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, Long supplier, String image,
+    public Product(String name, String description, Long supplier, String image, String thumbail_32x32,
             String thumbail_64x64, String thumbail_128x128, float price, int stock, ZonedDateTime createdAt,
             ZonedDateTime updatedAt) {
         this.name = name;
         this.description = description;
         this.supplier = supplier;
         this.image = image;
+        this.thumbail_32x32 = thumbail_32x32;
         this.thumbail_64x64 = thumbail_64x64;
         this.thumbail_128x128 = thumbail_128x128;
         this.price = price;
@@ -86,6 +88,14 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getThumbail_32x32() {
+        return thumbail_32x32;
+    }
+
+    public void setThumbail_32x32(String thumbail_32x32) {
+        this.thumbail_32x32 = thumbail_32x32;
     }
 
     public String getThumbail_64x64() {

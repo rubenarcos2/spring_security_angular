@@ -92,7 +92,8 @@ public class ProductController {
         if (productService.existsByName(productDto.getName()))
             return new ResponseEntity<>(new Message("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
         Product product = new Product(productDto.getName(), productDto.getDescription(), productDto.getSupplier(),
-                productDto.getImage(), productDto.getThumbail_64x64(), productDto.getThumbail_128x128(),
+                productDto.getImage(), productDto.getThumbail_32x32(), productDto.getThumbail_64x64(),
+                productDto.getThumbail_128x128(),
                 productDto.getPrice(), productDto.getStock(), productDto.getCreatedAt(), productDto.getUpdatedAt());
         productService.save(product);
         return new ResponseEntity<>(new Message("El producto se ha creado correctamente"), HttpStatus.OK);
@@ -116,6 +117,7 @@ public class ProductController {
         product.setImage(productDto.getImage());
         product.setPrice(productDto.getPrice());
         product.setStock(productDto.getStock());
+        product.setThumbail_32x32(productDto.getThumbail_32x32());
         product.setThumbail_128x128(productDto.getThumbail_128x128());
         product.setThumbail_64x64(productDto.getThumbail_64x64());
         product.setUpdatedAt(productDto.getUpdatedAt());
