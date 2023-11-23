@@ -43,7 +43,7 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
         this._supplier = result;
         this.supplierForm = this.formBuilder.group({
           id: [this.supplier?.id],
-          cif_nif: [this.supplier?.cif_nif, Validators.required],
+          cifNif: [this.supplier?.cifNif, Validators.required],
           name: [this.supplier?.name, [Validators.required, Validators.minLength(3)]],
           address: [this.supplier?.address, Validators.required],
           city: [this.supplier?.city, Validators.required],
@@ -69,7 +69,7 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.isSubmitted = true;
     this.dataForm.append('id', this.supplierForm.get('id')?.value);
-    this.dataForm.append('cif_nif', this.supplierForm.get('cif_nif')?.value);
+    this.dataForm.append('cifNif', this.supplierForm.get('cifNif')?.value);
     this.dataForm.append('name', this.supplierForm.get('name')?.value);
     this.dataForm.append('address', this.supplierForm.get('address')?.value);
     this.dataForm.append('city', this.supplierForm.get('city')?.value);
@@ -110,7 +110,7 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
     this.isSubmitted = true;
     switch (input) {
       case 'inputCifNif':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.cif_nif;
+        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.cifNif;
         break;
       case 'inputName':
         this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.name;

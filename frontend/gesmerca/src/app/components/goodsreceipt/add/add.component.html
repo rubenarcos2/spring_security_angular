@@ -25,7 +25,7 @@
                             formControlName="idsupplier">
                             <option *ngFor="let supplier of suppliers" value="{{supplier.id}}"
                                 id="supplier-{{supplier.id}}">
-                                {{supplier.cif_nif}} - {{supplier.name}}</option>
+                                {{supplier.cifNif}} - {{supplier.name}}</option>
                         </select>
                         <div class="form-text text-danger"
                             *ngIf="goodsReceiptFormControls['idsupplier'].invalid && (goodsReceiptFormControls['idsupplier'].dirty || goodsReceiptFormControls['idsupplier'].touched)">

@@ -25,7 +25,7 @@ public class CreateProducts implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Product product = new Product("Producto 1", "Descripción del producto 1", Long.valueOf(7),
+        Product product = new Product("Producto 1", "Descripción del producto 1", Long.valueOf(1),
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299.png",
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_32x32.png",
                 "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_64x64.png",

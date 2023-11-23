@@ -42,7 +42,7 @@
                         (change)="onChangeInput($event)">
                         <option *ngFor="let supplier of suppliers" value="{{supplier.id}}" id="supplier-{{supplier.id}}"
                             [selected]="supplier.id == product.supplier">
-                            {{supplier.cif_nif}} - {{supplier.name}}</option>
+                            {{supplier.cifNif}} - {{supplier.name}}</option>
                     </select>
                     &nbsp;
                     <a href="./proveedores/editar/{{product.supplier}}"><img src="../../assets/img/icons/suppliers.png"

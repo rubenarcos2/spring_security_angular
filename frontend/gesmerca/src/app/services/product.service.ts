@@ -39,10 +39,10 @@ export class ProductService {
 
   update(params: any) {
     const headers = new HttpHeaders();
-    return this.http.post(`${this.baseUrl}/product/update/`, params, { headers });
+    return this.http.put(`${this.baseUrl}/product/update`, params, { headers });
   }
 
-  delete(params: any) {
-    return this.http.post(`${this.baseUrl}/product/delete`, params);
+  delete(id: any) {
+    return this.http.delete(`${this.baseUrl}/product/delete/${id}`);
   }
 }

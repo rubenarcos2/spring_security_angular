@@ -90,17 +90,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
   deleteProduct(name: any, id: any) {
     if (window.confirm('¿Seguro que desea borrar el producto ' + name + '?')) {
       const product = this.products!.find(x => x.id === id);
-
       //Get all products of backend
-      this.subs2 = this.productService.delete(product).subscribe({
+      this.subs2 = this.productService.delete(product?.id).subscribe({
         next: result => {
           //Filter only selected product
           this._products = this.products!.filter(x => x.id !== id);
           let msg = JSON.parse(JSON.stringify(result));
           this.toastr.success(msg.message);
         },
-        error: error => {
-          this.toastr.error(error ? error : 'Operación no autorizada');
+        error: message => {
+          this.toastr.error(message ? message : 'Operación no autorizada');
         },
       });
     }
@@ -175,6 +174,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     //Get all products of backend
     this.subs4 = this.productService.getAllNoPaginated().subscribe({
       next: result => {
+        console.log(result);
         let products = JSON.parse(JSON.stringify(result));
         products.sort((a: { id: number }, b: { id: number }) => a.id - b.id);
         let index = 0;
@@ -184,7 +184,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
           prod.supplier = String(prod.supplier);
           prod.stock = String(prod.stock);
 
-          this.subs5 = this.supplierService.getById(prod.id).subscribe({
+          this.subs5 = this.supplierService.getById(prod.supplier).subscribe({
             next: result => {
               let res = JSON.parse(JSON.stringify(result));
               prod.supplier = String(res.name);
@@ -312,8 +312,38 @@ export class ProductListComponent implements OnInit, OnDestroy {
         .subscribe({
           next: result => {
             let res = JSON.parse(JSON.stringify(result));
-            this._links = res.links;
-            this._products = res.data;
+            this._links = [];
+            if (res.page.totalPages > 1) {
+              if (res._links.first) {
+                this._links.push(res._links.first);
+                this._links[this._links.length - 1].label = 'Primero';
+                this._links[this._links.length - 1].href = this._links[
+                  this._links.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.self) {
+                this._links.push(res._links.self);
+                this._links[this._links.length - 1].label = 'Anterior';
+                this._links[this._links.length - 1].href = this._links[
+                  this._links.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.next) {
+                this._links.push(res._links.next);
+                this._links[this._links.length - 1].label = 'Siguiente';
+                this._links[this._links.length - 1].href = this._links[
+                  this._links.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.last) {
+                this._links.push(res._links.last);
+                this._links[this._links.length - 1].label = 'Último';
+                this._links[this._links.length - 1].href = this._links[
+                  this._links.length - 1
+                ].href.replace('undefined&', '');
+              }
+            }
+            this._products = res._embedded.productModelList;
             document
               .getElementById('search-report')
               ?.getElementsByTagName('button')[0]

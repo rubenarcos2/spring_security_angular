@@ -92,7 +92,10 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     this.dataForm.append('name', this.productForm.get('name')?.value);
     this.dataForm.append('description', this.productForm.get('description')?.value);
     this.dataForm.append('supplier', this.productForm.get('supplier')?.value);
-    this.dataForm.append('price', this.productForm.get('price')?.value.replace(/,/g, '.'));
+    this.dataForm.append(
+      'price',
+      this.productForm.get('price')?.value.toString().replace(/,/g, '.')
+    );
     if (this.dataForm.get('image') !== null)
       this.dataForm.append('image', this.productForm.get('image')?.value);
     this.dataForm.append('stock', this.productForm.get('stock')?.value);
@@ -104,8 +107,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
         this.router.navigate([this.returnUrl || '/productos']);
       },
-      error: error => {
-        this.toastr.error(error.error ? error.error : 'No se puede conectar con el servidor');
+      error: message => {
+        this.toastr.error(message ? message : 'No se puede conectar con el servidor');
       },
     });
     this.subs3.add(() => {

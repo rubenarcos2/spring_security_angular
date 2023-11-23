@@ -38,8 +38,38 @@ export class SupplierListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
-          this._links = res.links;
-          this._suppliers = res.data;
+          this._links = [];
+          if (res.page.totalPages > 1) {
+            if (res._links.first) {
+              this._links.push(res._links.first);
+              this._links[this._links.length - 1].label = 'Primero';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.self) {
+              this._links.push(res._links.self);
+              this._links[this._links.length - 1].label = 'Anterior';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.next) {
+              this._links.push(res._links.next);
+              this._links[this._links.length - 1].label = 'Siguiente';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.last) {
+              this._links.push(res._links.last);
+              this._links[this._links.length - 1].label = 'Último';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+          }
+          this._suppliers = res._embedded.supplierModelList;
         },
         error: error => {
           this.toastr.error(error ? error : 'No se puede conectar con el servidor');
@@ -89,8 +119,38 @@ export class SupplierListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
-          this._links = res.links;
-          this._suppliers = res.data;
+          this._links = [];
+          if (res.page.totalPages > 1) {
+            if (res._links.first) {
+              this._links.push(res._links.first);
+              this._links[this._links.length - 1].label = 'Primero';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.self) {
+              this._links.push(res._links.self);
+              this._links[this._links.length - 1].label = 'Anterior';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.next) {
+              this._links.push(res._links.next);
+              this._links[this._links.length - 1].label = 'Siguiente';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.last) {
+              this._links.push(res._links.last);
+              this._links[this._links.length - 1].label = 'Último';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+          }
+          this._suppliers = res._embedded.supplierModelList;
         },
         error: error => {
           this.toastr.error(error ? error : 'No se puede conectar con el servidor');
@@ -144,7 +204,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
       },
       {
         title: 'CIF/NIF',
-        key: 'cif_nif',
+        key: 'cifNif',
       },
       {
         title: 'Nombre',
@@ -213,7 +273,7 @@ export class SupplierListComponent implements OnInit, OnDestroy {
           next: result => {
             let res = JSON.parse(JSON.stringify(result)) as Supplier[];
             this._suppliers = res.filter(
-              e => e.cif_nif?.includes(text) || e.name?.includes(text) || e.phone?.includes(text)
+              e => e.cifNif?.includes(text) || e.name?.includes(text) || e.phone?.includes(text)
             );
             this._links = undefined;
             document

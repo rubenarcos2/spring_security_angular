@@ -1,11 +1,9 @@
 package com.rarcos.gesmerca.dto;
 
-import java.time.ZonedDateTime;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public class ProductDto {
+public class ProductDtoRequest {
     @NotNull(message = "El producto debe tener un id")
     private Long id;
     @NotNull(message = "El producto debe tener un nombre")
@@ -13,37 +11,25 @@ public class ProductDto {
     private String description;
     private Long supplier;
     private String image;
-    private String thumbail_32x32;
-    private String thumbail_64x64;
-    private String thumbail_128x128;
     @Min(value = 0, message = "El precio del producto debe ser mayor a 0")
     private Float price;
     @Min(value = -1, message = "El stock del producto no debe ser negativo")
     private int stock;
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
 
-    public ProductDto() {
+    public ProductDtoRequest() {
     }
 
-    public ProductDto(@NotNull(message = "El producto debe tener un id") Long id,
+    public ProductDtoRequest(@NotNull(message = "El producto debe tener un id") Long id,
             @NotNull(message = "El producto debe tener un nombre") String name, String description, Long supplier,
-            String image, String thumbail_32x32, String thumbail_64x64, String thumbail_128x128,
-            @Min(value = 0, message = "El precio del producto debe ser mayor a 0") Float price,
-            @Min(value = -1, message = "El stock del producto no debe ser negativo") int stock, ZonedDateTime createdAt,
-            ZonedDateTime updatedAt) {
+            String image, @Min(value = 0, message = "El precio del producto debe ser mayor a 0") Float price,
+            @Min(value = -1, message = "El stock del producto no debe ser negativo") int stock) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.supplier = supplier;
         this.image = image;
-        this.thumbail_32x32 = thumbail_32x32;
-        this.thumbail_64x64 = thumbail_64x64;
-        this.thumbail_128x128 = thumbail_128x128;
         this.price = price;
         this.stock = stock;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -86,30 +72,6 @@ public class ProductDto {
         this.image = image;
     }
 
-    public String getThumbail_32x32() {
-        return thumbail_32x32;
-    }
-
-    public void setThumbail_32x32(String thumbail_32x32) {
-        this.thumbail_32x32 = thumbail_32x32;
-    }
-
-    public String getThumbail_64x64() {
-        return thumbail_64x64;
-    }
-
-    public void setThumbail_64x64(String thumbail_64x64) {
-        this.thumbail_64x64 = thumbail_64x64;
-    }
-
-    public String getThumbail_128x128() {
-        return thumbail_128x128;
-    }
-
-    public void setThumbail_128x128(String thumbail_128x128) {
-        this.thumbail_128x128 = thumbail_128x128;
-    }
-
     public Float getPrice() {
         return price;
     }
@@ -124,22 +86,6 @@ public class ProductDto {
 
     public void setStock(int stock) {
         this.stock = stock;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public ZonedDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
 }

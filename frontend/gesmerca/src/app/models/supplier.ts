@@ -1,6 +1,6 @@
 export interface Supplier {
   id?: number;
-  cif_nif?: string;
+  cifNif?: string;
   name?: string;
   address?: string;
   city?: string;
