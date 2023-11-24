@@ -38,7 +38,7 @@ export class RoleListComponent implements OnInit, OnDestroy {
           //Get all roles of this user
           this.subs2 = this.roleService.getRoleUser(u.id).subscribe({
             next: result => {
-              let rol = JSON.parse(JSON.stringify(result));
+              let rol = JSON.parse(JSON.stringify(result))[0];
               this.selectCmbRole(u, rol);
             },
             error: error => {
@@ -72,7 +72,7 @@ export class RoleListComponent implements OnInit, OnDestroy {
   selectCmbRole(u: User, rol: Role) {
     u.roles?.push(rol);
     let sel = document.getElementById('select-roles-' + u.id) as HTMLSelectElement;
-    let op = document.getElementById(u.id + '-' + rol) as HTMLOptionElement;
+    let op = document.getElementById(u.id + '-' + rol.id) as HTMLOptionElement;
     sel.removeAttribute('disabled');
     op.selected = true;
     document.getElementById('btn-' + u.id)?.removeAttribute('disabled');

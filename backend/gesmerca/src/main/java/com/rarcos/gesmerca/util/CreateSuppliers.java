@@ -1,8 +1,6 @@
 package com.rarcos.gesmerca.util;
 
-import com.rarcos.gesmerca.entity.Product;
 import com.rarcos.gesmerca.entity.Supplier;
-import com.rarcos.gesmerca.service.ProductService;
 import com.rarcos.gesmerca.service.SupplierService;
 
 import java.time.ZonedDateTime;

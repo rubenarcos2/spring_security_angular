@@ -13,7 +13,7 @@ export class RoleService {
   constructor(private http: HttpClient) {}
 
   getAll() {
-    return this.http.get<Role[]>(`${this.baseUrl}/role/`);
+    return this.http.get<Role[]>(`${this.baseUrl}/role`);
   }
 
   getById(id: any) {
@@ -25,7 +25,7 @@ export class RoleService {
   }
 
   setRoleUser(params: any, id: any) {
-    return this.http.post(`${this.baseUrl}/role/user/${id}`, params);
+    return this.http.put(`${this.baseUrl}/role/user/${id}`, params);
   }
 
   create(params: any) {
@@ -33,7 +33,7 @@ export class RoleService {
   }
 
   update(params: any, id: any) {
-    return this.http.post(`${this.baseUrl}/role/update/${id}`, params);
+    return this.http.put(`${this.baseUrl}/role/update/${id}`, params);
   }
 
   delete(params: any, id: any) {

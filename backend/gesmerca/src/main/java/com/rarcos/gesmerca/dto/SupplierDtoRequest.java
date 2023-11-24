@@ -1,7 +1,5 @@
 package com.rarcos.gesmerca.dto;
 
-import java.time.ZonedDateTime;
-
 import jakarta.validation.constraints.NotNull;
 
 public class SupplierDtoRequest {

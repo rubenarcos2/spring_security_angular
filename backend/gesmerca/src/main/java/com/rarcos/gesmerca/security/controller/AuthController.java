@@ -1,7 +1,8 @@
 package com.rarcos.gesmerca.security.controller;
 
 import java.text.ParseException;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.dto.Message;
@@ -66,6 +66,17 @@ public class AuthController {
         ProfileUser profileUser = new ProfileUser(user, userService.getByNombreUsuario(userName).get().getRoles(),
                 userService.getByNombreUsuario(userName).get().getPermissions());
         return ResponseEntity.ok(profileUser);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> users() {
+        List<User> listUser = new ArrayList<>();
+        for (com.rarcos.gesmerca.security.entity.User userEntity : userService.getAll()) {
+            User user = new User(userEntity.getId(), userEntity.getName(), userEntity.getUserName(),
+                    userEntity.getEmail());
+            listUser.add(user);
+        }
+        return ResponseEntity.ok(listUser);
     }
 
     @GetMapping("/logout")

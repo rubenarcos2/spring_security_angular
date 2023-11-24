@@ -9,4 +9,7 @@ import com.rarcos.gesmerca.security.enums.RoleName;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByRoleName(RoleName roleName);
+
+    boolean existsByRoleName(String roleName);
+
 }

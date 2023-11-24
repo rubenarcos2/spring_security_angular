@@ -13,7 +13,7 @@ export class PermissionService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Permission[]> {
-    return this.http.get<Permission[]>(`${this.baseUrl}/permission/`);
+    return this.http.get<Permission[]>(`${this.baseUrl}/permission`);
   }
 
   getById(id: number): Observable<Permission> {
@@ -25,6 +25,6 @@ export class PermissionService {
   }
 
   setPermissionsUser(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/permission/user/${id}`, params);
+    return this.http.put(`${this.baseUrl}/permission/user/${id}`, params);
   }
 }

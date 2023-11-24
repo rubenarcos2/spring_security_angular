@@ -111,14 +111,17 @@ export class PermissionsListComponent implements OnInit, OnDestroy {
     let cmb = document.getElementById('select-user') as HTMLSelectElement;
     let userId = cmb.value.substring('user-'.length);
     if (window.confirm('¿Está seguro que desea cambiar el rol al usuario?')) {
-      let permListChecked: Array<String> = [];
+      let permListChecked: Array<Permission> = [];
       this.permissions.forEach(p => {
         let chk = document.getElementById('chk-' + p.id) as HTMLInputElement;
-        if (chk.checked) permListChecked.push(chk.value);
+        if (chk.checked) {
+          let permission: Permission = { id: p.id, permissionName: chk.value };
+          permListChecked.push(permission);
+        }
       });
-      let param = new FormData();
-      param.append('permissions', JSON.stringify(permListChecked));
-      this.subs2 = this.permissionService.setPermissionsUser(param, userId).subscribe({
+      //let param = new FormData();
+      //param.append('permissions', JSON.stringify(permListChecked));
+      this.subs2 = this.permissionService.setPermissionsUser(permListChecked, userId).subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
           res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
