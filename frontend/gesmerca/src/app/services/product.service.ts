@@ -37,7 +37,7 @@ export class ProductService {
     return this.http.post(`${this.baseUrl}/product/create`, params);
   }
 
-  update(params: any) {
+  update(params: any): Observable<any> {
     const headers = new HttpHeaders();
     return this.http.put(`${this.baseUrl}/product/update`, params, { headers });
   }

@@ -1,5 +1,6 @@
 package com.rarcos.gesmerca.controller;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +15,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.assemblers.SupplierModelAssembler;
 import com.rarcos.gesmerca.dto.Message;
+import com.rarcos.gesmerca.dto.Error;
 import com.rarcos.gesmerca.dto.SupplierDto;
+import com.rarcos.gesmerca.dto.SupplierDtoRequest;
 import com.rarcos.gesmerca.entity.Supplier;
 import com.rarcos.gesmerca.model.SupplierModel;
 import com.rarcos.gesmerca.service.SupplierService;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/supplier")
@@ -77,40 +81,38 @@ public class SupplierController {
     @GetMapping("/name/{name}")
     public ResponseEntity<Object> getByName(@PathVariable("name") String name) {
         if (!supplierService.existsByName(name))
-            return new ResponseEntity<>(new Message("No existe un proveedor para el nombre dado"),
+            return new ResponseEntity<>(new Error("No existe un proveedor para el nombre dado"),
                     HttpStatus.NOT_FOUND);
         Supplier supplier = supplierService.getOneByName(name).get(0);
         return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody SupplierDto supplierDto) {
+    public ResponseEntity<?> create(@ModelAttribute SupplierDtoRequest supplierDto) {
         if (StringUtils.isBlank(supplierDto.getName()))
-            return new ResponseEntity<>(new Message("El proveedor debe de tener un nombre"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El proveedor debe de tener un nombre"), HttpStatus.BAD_REQUEST);
         if (supplierService.existsByName(supplierDto.getName()))
-            return new ResponseEntity<>(new Message("El nombre del proveedor ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El nombre del proveedor ya existe"), HttpStatus.BAD_REQUEST);
         if (StringUtils.isBlank(supplierDto.getCifNif()))
-            return new ResponseEntity<>(new Message("El proveedor debe de tener un CIF/NIF"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El proveedor debe de tener un CIF/NIF"), HttpStatus.BAD_REQUEST);
         if (supplierService.existsByCifNif(supplierDto.getCifNif()))
-            return new ResponseEntity<>(new Message("El CIF/NIF del proveedor ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El CIF/NIF del proveedor ya existe"), HttpStatus.BAD_REQUEST);
         Supplier supplier = new Supplier(supplierDto.getCifNif(), supplierDto.getName(), supplierDto.getAddress(),
                 supplierDto.getCity(), supplierDto.getPhone(), supplierDto.getEmail(), supplierDto.getWeb(),
-                supplierDto.getNotes(), supplierDto.getCreatedAt(), supplierDto.getUpdatedAt());
+                supplierDto.getNotes(), ZonedDateTime.now(), ZonedDateTime.now());
         supplierService.save(supplier);
         return new ResponseEntity<>(new Message("El proveedor se ha creado correctamente"), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody SupplierDto supplierDto) {
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@Valid @ModelAttribute SupplierDto supplierDto) {
+        if (!supplierService.existsById(supplierDto.getId()))
+            return new ResponseEntity<>(new Error("No existe un proveedor para id dado"), HttpStatus.NOT_FOUND);
         if (StringUtils.isBlank(supplierDto.getName()))
-            return new ResponseEntity<>(new Message("El proveedor debe de tener un nombre"), HttpStatus.BAD_REQUEST);
-        if (supplierService.existsByName(supplierDto.getName()))
-            return new ResponseEntity<>(new Message("El nombre del proveedor ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El proveedor debe de tener un nombre"), HttpStatus.BAD_REQUEST);
         if (StringUtils.isBlank(supplierDto.getCifNif()))
-            return new ResponseEntity<>(new Message("El proveedor debe de tener un CIF/NIF"), HttpStatus.BAD_REQUEST);
-        if (supplierService.existsByCifNif(supplierDto.getCifNif()))
-            return new ResponseEntity<>(new Message("El CIF/NIF del proveedor ya existe"), HttpStatus.BAD_REQUEST);
-        Supplier supplier = supplierService.getOne(id).get();
+            return new ResponseEntity<>(new Error("El proveedor debe de tener un CIF/NIF"), HttpStatus.BAD_REQUEST);
+        Supplier supplier = supplierService.getOne(supplierDto.getId()).get();
         supplier.setCifNif(supplierDto.getCifNif());
         supplier.setName(supplierDto.getName());
         supplier.setAddress(supplierDto.getAddress());
@@ -128,7 +130,7 @@ public class SupplierController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         if (!supplierService.existsById(id))
-            return new ResponseEntity<>(new Message("No existe un proveedor para id dado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No existe un proveedor para id dado"), HttpStatus.NOT_FOUND);
         supplierService.delete(id);
         return new ResponseEntity<>(new Message("El proveedor se ha eliminado correctamente"), HttpStatus.OK);
     }

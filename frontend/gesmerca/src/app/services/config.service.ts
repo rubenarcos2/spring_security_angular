@@ -49,15 +49,15 @@ export class ConfigService {
   }
 
   update(params: any) {
-    return this.http.post(`${this.baseUrl}/config/update/`, params);
+    return this.http.put(`${this.baseUrl}/config/update`, params);
   }
 
   updateUserConfig(params: any, id: any) {
-    return this.http.post(`${this.baseUrl}/config/user/update/${id}`, params);
+    return this.http.put(`${this.baseUrl}/config/user/update/${id}`, params);
   }
 
-  delete(params: any) {
-    return this.http.post(`${this.baseUrl}/config/delete`, params);
+  delete(id: any) {
+    return this.http.delete(`${this.baseUrl}/config/delete/${id}`);
   }
 
   deleteUserConfig(params: any, id: any) {

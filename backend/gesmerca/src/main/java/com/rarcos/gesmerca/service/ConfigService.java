@@ -63,6 +63,10 @@ public class ConfigService {
         configRepository.deleteById(id);
     }
 
+    public void deleteUserConfig(Long id) {
+        userConfigRepository.deleteById(id);
+    }
+
     public boolean existsById(Long id) {
         return configRepository.existsById(id);
     }

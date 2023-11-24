@@ -79,20 +79,18 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
     this.dataForm.append('notes', this.supplierForm.get('notes')?.value);
 
     //Update supplier's data to backend
-    this.subs2 = this.supplierService
-      .update(this.dataForm, this.supplierForm.get('id')?.value)
-      .subscribe({
-        next: result => {
-          let res = JSON.parse(JSON.stringify(result));
-          res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
+    this.subs2 = this.supplierService.update(this.dataForm).subscribe({
+      next: result => {
+        let res = JSON.parse(JSON.stringify(result));
+        res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
 
-          //On successful operation redirect to supplier's page
-          this.router.navigate([this.returnUrl || '/proveedores']);
-        },
-        error: error => {
-          this.toastr.error(error.error ? error.error : 'No se puede conectar con el servidor');
-        },
-      });
+        //On successful operation redirect to supplier's page
+        this.router.navigate([this.returnUrl || '/proveedores']);
+      },
+      error: message => {
+        this.toastr.error(message ? message : 'No se puede conectar con el servidor');
+      },
+    });
     this.subs2.add(() => {
       this.isSubmitted = false;
     });

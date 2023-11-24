@@ -31,7 +31,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
-          console.log(res);
           this._links = [];
           if (res.page.totalPages > 1) {
             if (res._links.first) {

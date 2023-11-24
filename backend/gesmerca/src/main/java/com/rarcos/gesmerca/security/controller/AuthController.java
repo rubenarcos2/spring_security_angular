@@ -5,12 +5,16 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.dto.Message;
@@ -22,6 +26,8 @@ import com.rarcos.gesmerca.security.dto.User;
 import com.rarcos.gesmerca.security.jwt.JwtProvider;
 import com.rarcos.gesmerca.security.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -53,7 +59,6 @@ public class AuthController {
     @GetMapping("/user-profile")
     public ResponseEntity<ProfileUser> profile(@RequestHeader("Authorization") String bearerToken) {
         String userName = jwtProvider.getNombreUsuarioFromToken(bearerToken.split(" ")[1].trim());
-        ;
         User user = new User(userService.getByNombreUsuario(userName).get().getId(),
                 userService.getByNombreUsuario(userName).get().getName(),
                 userService.getByNombreUsuario(userName).get().getUserName(),
@@ -61,5 +66,14 @@ public class AuthController {
         ProfileUser profileUser = new ProfileUser(user, userService.getByNombreUsuario(userName).get().getRoles(),
                 userService.getByNombreUsuario(userName).get().getPermissions());
         return ResponseEntity.ok(profileUser);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Message> logoutPage(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return ResponseEntity.ok(new Message("Se ha cerrado la sesión"));
     }
 }

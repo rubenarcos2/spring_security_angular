@@ -35,6 +35,15 @@ public class CreateConfigs implements CommandLineRunner {
 
         UserConfig userConfig = new UserConfig(userService.getByNombreUsuario("employee").get(), config, "true",
                 "Alto contraste para empleados");
+        UserConfig userConfig2 = new UserConfig(userService.getByNombreUsuario("employee").get(), config2, "true",
+                "Text to Speech");
+        UserConfig userConfig3 = new UserConfig(userService.getByNombreUsuario("user").get(), config, "true",
+                "Alto contraste para empleados");
+        UserConfig userConfig4 = new UserConfig(userService.getByNombreUsuario("user").get(), config2, "true",
+                "Text to Speech");
         configService.save(userConfig);
+        configService.save(userConfig2);
+        configService.save(userConfig3);
+        configService.save(userConfig4);
     }
 }

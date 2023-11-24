@@ -10,7 +10,7 @@ public class ConfigDto {
     private String title;
     private String description;
     private String domain;
-    
+
     public ConfigDto() {
     }
 

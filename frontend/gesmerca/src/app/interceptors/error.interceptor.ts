@@ -15,11 +15,13 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (!this.isLoggedOut) {
           this.isLoggedOut = true;
           //Local logout if 400 expired session response returned from api or other 400 error. Hidden error on production mode
+          /*
           if (error?.status === 400) {
             sessionStorage.clear();
             location.replace('/login?expired=true');
             return throwError(() => 'Ha expirado la sesión');
           }
+          */
           //Auto logout if 401 Unauthorized or 403 Forbidden response returned from api
           if (error?.status === 401 || error?.status === 403) {
             this.authService.logout().subscribe({

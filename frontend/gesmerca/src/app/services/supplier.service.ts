@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Supplier } from '../models/supplier';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
 @Injectable({
@@ -43,11 +43,12 @@ export class SupplierService {
     return this.http.post(`${this.baseUrl}/supplier/create`, params);
   }
 
-  update(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/supplier/update/${id}`, params);
+  update(params: any): Observable<any> {
+    const headers = new HttpHeaders();
+    return this.http.put(`${this.baseUrl}/supplier/update`, params, { headers });
   }
 
-  delete(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/supplier/delete/${id}`, params);
+  delete(id: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/supplier/delete/${id}`);
   }
 }

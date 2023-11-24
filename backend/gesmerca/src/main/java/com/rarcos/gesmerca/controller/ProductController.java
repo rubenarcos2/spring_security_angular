@@ -19,15 +19,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.assemblers.ProductModelAssembler;
 import com.rarcos.gesmerca.dto.Message;
-import com.rarcos.gesmerca.dto.ProductDto;
+import com.rarcos.gesmerca.dto.Error;
 import com.rarcos.gesmerca.dto.ProductDtoRequest;
 import com.rarcos.gesmerca.entity.Product;
 import com.rarcos.gesmerca.model.ProductModel;
@@ -74,7 +72,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         if (!productService.existsById(id))
-            return new ResponseEntity<>(new Message("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
         Product product = productService.getOne(id).get();
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -82,7 +80,7 @@ public class ProductController {
     @GetMapping("/name/{name}")
     public ResponseEntity<Object> getByName(@PathVariable("name") String name) {
         if (!productService.existsByName(name))
-            return new ResponseEntity<>(new Message("No existe un producto para el nombre dado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No existe un producto para el nombre dado"), HttpStatus.NOT_FOUND);
         Product product = productService.getOneByName(name).get(0);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -90,12 +88,12 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@ModelAttribute ProductDtoRequest productDto) {
         if (StringUtils.isBlank(productDto.getName()))
-            return new ResponseEntity<>(new Message("El producto debe de tener un nombre"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El producto debe de tener un nombre"), HttpStatus.BAD_REQUEST);
         if (productDto.getPrice() == null || productDto.getPrice() <= 0)
-            return new ResponseEntity<>(new Message("El producto debe de tener un precio mayor a 0"),
+            return new ResponseEntity<>(new Error("El producto debe de tener un precio mayor a 0"),
                     HttpStatus.BAD_REQUEST);
         if (productService.existsByName(productDto.getName()))
-            return new ResponseEntity<>(new Message("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
         Product product = new Product(productDto.getName(), productDto.getDescription(), productDto.getSupplier(),
                 productDto.getImage(), null, null, null,
                 productDto.getPrice(), productDto.getStock(), ZonedDateTime.now(), ZonedDateTime.now());
@@ -106,14 +104,14 @@ public class ProductController {
     @PutMapping("/update")
     public ResponseEntity<?> update(@Valid @ModelAttribute ProductDtoRequest productDto) {
         if (!productService.existsById(productDto.getId()))
-            return new ResponseEntity<>(new Message("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
         if (!productService.existsByName(productDto.getName())
                 && productService.getOneByName(productDto.getName()).get(0).getId() != productDto.getId())
-            return new ResponseEntity<>(new Message("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
         if (StringUtils.isBlank(productDto.getName()))
-            return new ResponseEntity<>(new Message("El producto debe de tener un nombre"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Error("El producto debe de tener un nombre"), HttpStatus.BAD_REQUEST);
         if (productDto.getPrice() == null || productDto.getPrice() <= 0)
-            return new ResponseEntity<>(new Message("El producto debe de tener un precio mayor a 0"),
+            return new ResponseEntity<>(new Error("El producto debe de tener un precio mayor a 0"),
                     HttpStatus.BAD_REQUEST);
         Product product = productService.getOne(productDto.getId()).get();
         product.setName(productDto.getName());
@@ -130,7 +128,7 @@ public class ProductController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         if (!productService.existsById(id))
-            return new ResponseEntity<>(new Message("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Error("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
         productService.delete(id);
         return new ResponseEntity<>(new Message("El producto se ha eliminado correctamente"), HttpStatus.OK);
     }

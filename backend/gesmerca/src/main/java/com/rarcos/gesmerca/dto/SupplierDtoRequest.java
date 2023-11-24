@@ -4,8 +4,9 @@ import java.time.ZonedDateTime;
 
 import jakarta.validation.constraints.NotNull;
 
-public class SupplierDto {
+public class SupplierDtoRequest {
 
+    @NotNull(message = "El producto debe tener un id")
     private Long id;
     @NotNull(message = "El producto debe tener un CIF/NIF")
     private String cifNif;
@@ -20,17 +21,16 @@ public class SupplierDto {
     private String email;
     private String web;
     private String notes;
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
 
-    public SupplierDto(Long id, @NotNull(message = "El producto debe tener un CIF/NIF") String cif_nif,
+    public SupplierDtoRequest(@NotNull(message = "El producto debe tener un id") Long id,
+            @NotNull(message = "El producto debe tener un CIF/NIF") String cifNif,
             @NotNull(message = "El producto debe tener un nombre") String name,
             @NotNull(message = "El producto debe tener una dirección") String address,
             @NotNull(message = "El producto debe tener una ciudad") String city,
             @NotNull(message = "El producto debe tener un teléfono") String phone, String email, String web,
-            String notes, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
+            String notes) {
         this.id = id;
-        this.cifNif = cif_nif;
+        this.cifNif = cifNif;
         this.name = name;
         this.address = address;
         this.city = city;
@@ -38,8 +38,6 @@ public class SupplierDto {
         this.email = email;
         this.web = web;
         this.notes = notes;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -54,8 +52,8 @@ public class SupplierDto {
         return cifNif;
     }
 
-    public void setCifNif(String cif_nif) {
-        this.cifNif = cif_nif;
+    public void setCifNif(String cifNif) {
+        this.cifNif = cifNif;
     }
 
     public String getName() {
@@ -112,22 +110,6 @@ public class SupplierDto {
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public ZonedDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
 }

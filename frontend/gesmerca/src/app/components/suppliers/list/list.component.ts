@@ -88,14 +88,14 @@ export class SupplierListComponent implements OnInit, OnDestroy {
       const supplier = this.suppliers!.find(x => x.id === id);
 
       //Remove this suplier of backend
-      this.supplierService.delete(supplier, id).subscribe({
+      this.supplierService.delete(supplier?.id).subscribe({
         next: result => {
           this._suppliers = this.suppliers!.filter(x => x.id !== id);
           let msg = JSON.parse(JSON.stringify(result));
           this.toastr.success(msg.message);
         },
-        error: error => {
-          this.toastr.error(error ? error : 'Operación no autorizada');
+        error: message => {
+          this.toastr.error(message ? message : 'Operación no autorizada');
         },
       });
     }
@@ -176,7 +176,6 @@ export class SupplierListComponent implements OnInit, OnDestroy {
           delete sup.updated_at;
           delete sup.image;
         });
-        console.log(suppliers);
         this.generatePDF(suppliers);
         this.isPrintingPDF = false;
       },

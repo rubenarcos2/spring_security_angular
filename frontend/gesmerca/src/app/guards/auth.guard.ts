@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard{
+export class AuthGuard {
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -32,7 +32,7 @@ export class AuthGuard{
     }
     // user not logged so redirect to home page
     this.router.navigate(['/']);
-    this.toastr.info('Acceso restringido');
+    this.toastr.warning('Acceso restringido');
     return false;
   }
 }

@@ -3,10 +3,10 @@
         <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label for="inputCifNif" class="form-label">Cif/Nif</label>
-                <input type="text" class="form-control" id="inputCifNif" formControlName="cif_nif">
+                <input type="text" class="form-control" id="inputCifNif" formControlName="cifNif">
                 <div class="form-text text-danger"
-                    *ngIf="supplierFormControls['cif_nif'].invalid && (supplierFormControls['cif_nif'].dirty || supplierFormControls['cif_nif'].touched)">
-                    <ng-container *ngIf="supplierFormControls['cif_nif'].errors?.['required']">
+                    *ngIf="supplierFormControls['cifNif'].invalid && (supplierFormControls['cifNif'].dirty || supplierFormControls['cifNif'].touched)">
+                    <ng-container *ngIf="supplierFormControls['cifNif'].errors?.['required']">
                         Introduzca un cif/nif para el proveedor.
                     </ng-container>
                 </div>

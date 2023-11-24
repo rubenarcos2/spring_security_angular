@@ -31,7 +31,7 @@ export class SupplierAddComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataForm = new FormData();
     this.supplierForm = this.formBuilder.group({
-      cif_nif: ['', Validators.required],
+      cifNif: ['', Validators.required],
       name: ['', [Validators.required, Validators.minLength(3)]],
       address: ['', Validators.required],
       city: ['', Validators.required],
@@ -51,8 +51,7 @@ export class SupplierAddComponent implements OnInit, OnDestroy {
    */
   onSubmit() {
     this.isSubmitted = true;
-    this.dataForm.append('id', this.supplierForm.get('id')?.value);
-    this.dataForm.append('cif_nif', this.supplierForm.get('cif_nif')?.value);
+    this.dataForm.append('cifNif', this.supplierForm.get('cifNif')?.value);
     this.dataForm.append('name', this.supplierForm.get('name')?.value);
     this.dataForm.append('address', this.supplierForm.get('address')?.value);
     this.dataForm.append('city', this.supplierForm.get('city')?.value);
