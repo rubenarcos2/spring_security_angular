@@ -40,8 +40,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this._links.length - 1
               ].href.replace('undefined&', '');
             }
-            if (res._links.self) {
-              this._links.push(res._links.self);
+            if (res._links.prev) {
+              this._links.push(res._links.prev);
               this._links[this._links.length - 1].label = 'Anterior';
               this._links[this._links.length - 1].href = this._links[
                 this._links.length - 1
@@ -88,6 +88,37 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
+          this._links = [];
+          if (res.page.totalPages > 1) {
+            if (res._links.first) {
+              this._links.push(res._links.first);
+              this._links[this._links.length - 1].label = 'Primero';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.prev) {
+              this._links.push(res._links.prev);
+              this._links[this._links.length - 1].label = 'Anterior';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.next) {
+              this._links.push(res._links.next);
+              this._links[this._links.length - 1].label = 'Siguiente';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.last) {
+              this._links.push(res._links.last);
+              this._links[this._links.length - 1].label = 'Último';
+              this._links[this._links.length - 1].href = this._links[
+                this._links.length - 1
+              ].href.replace('undefined&', '');
+            }
+          }
           this._products = res._embedded.productModelList;
         },
         error: error => {

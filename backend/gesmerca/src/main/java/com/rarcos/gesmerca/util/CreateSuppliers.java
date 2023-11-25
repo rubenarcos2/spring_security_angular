@@ -1,9 +1,11 @@
 package com.rarcos.gesmerca.util;
 
+import com.github.javafaker.Faker;
 import com.rarcos.gesmerca.entity.Supplier;
 import com.rarcos.gesmerca.service.SupplierService;
 
 import java.time.ZonedDateTime;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@Order(4)
+@Order(3)
 public class CreateSuppliers implements CommandLineRunner {
 
     @Autowired
@@ -25,8 +27,15 @@ public class CreateSuppliers implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Supplier supplier = new Supplier("A123456789", "Proveedor 1", "C/ del viento, S/N", "Málaga", "123456789",
-                "a@a.com", null, null, ZonedDateTime.now(), ZonedDateTime.now());
-        supplierService.save(supplier);
+        Faker faker = new Faker(new Locale("es-ES"));
+        for (int i = 1; i <= 50; i++) {
+            Supplier supplier = new Supplier("A" + faker.number().numberBetween(11111111, 99999999),
+                    faker.company().name(), faker.address().fullAddress(),
+                    faker.address().cityName(), faker.phoneNumber().phoneNumber(),
+                    faker.internet().emailAddress(), faker.internet().domainName(), null, ZonedDateTime.now(),
+                    ZonedDateTime.now());
+            supplierService.save(supplier);
+        }
+
     }
 }

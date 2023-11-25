@@ -51,8 +51,8 @@
 <nav>
     <ul class="pagination justify-content-center">
         <li class="page-item" *ngFor="let link of links">
-            <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}" href="{{link.url}}"
-                (click)="onChangePagination($event)">{{link.label}}</a>
+            <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}"
+                href="{{link.href}}" (click)="onChangePagination($event)">{{link.label}}</a>
         </li>
     </ul>
 </nav>

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@Order(3)
+@Order(2)
 public class CreateConfigs implements CommandLineRunner {
 
         @Autowired

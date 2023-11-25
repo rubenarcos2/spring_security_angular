@@ -47,8 +47,8 @@ export class SupplierListComponent implements OnInit, OnDestroy {
                 this._links.length - 1
               ].href.replace('undefined&', '');
             }
-            if (res._links.self) {
-              this._links.push(res._links.self);
+            if (res._links.prev) {
+              this._links.push(res._links.prev);
               this._links[this._links.length - 1].label = 'Anterior';
               this._links[this._links.length - 1].href = this._links[
                 this._links.length - 1
@@ -128,8 +128,8 @@ export class SupplierListComponent implements OnInit, OnDestroy {
                 this._links.length - 1
               ].href.replace('undefined&', '');
             }
-            if (res._links.self) {
-              this._links.push(res._links.self);
+            if (res._links.prev) {
+              this._links.push(res._links.prev);
               this._links[this._links.length - 1].label = 'Anterior';
               this._links[this._links.length - 1].href = this._links[
                 this._links.length - 1

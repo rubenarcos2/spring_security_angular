@@ -51,7 +51,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<PagedModel<ProductModel>> listPagination(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "4") int size,
+            @RequestParam(defaultValue = "8") int size,
             @RequestParam(defaultValue = "") List<String> sortList,
             @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         // create Pageable object using the page, size and sort details
