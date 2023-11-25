@@ -125,6 +125,18 @@ export class PermissionsListComponent implements OnInit, OnDestroy {
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
           res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
+          this._users.forEach(u => {
+            //Get user's permission of backend
+            this.permissionService.getPermissionsUser(u.id).subscribe({
+              next: result => {
+                let permissions = JSON.parse(JSON.stringify(result));
+                u.permissions = permissions;
+              },
+              error: error => {
+                this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+              },
+            });
+          });
         },
         error: error => {
           this.toastr.error(error ? error : 'No se puede conectar con el servidor');

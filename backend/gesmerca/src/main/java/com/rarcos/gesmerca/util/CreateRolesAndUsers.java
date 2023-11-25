@@ -157,7 +157,7 @@ public class CreateRolesAndUsers implements CommandLineRunner {
         Set<Role> rolesAdmin = new HashSet<Role>();
         rolesAdmin.add(roleAdmin);
         admin.setRoles(rolesAdmin);
-        // admin.setPermissions(permissionsAdmin);
+        admin.setPermissions(permissionsAdmin);
         userService.save(admin);
 
         User employee = new User();
@@ -168,7 +168,7 @@ public class CreateRolesAndUsers implements CommandLineRunner {
         Set<Role> rolesEmployee = new HashSet<Role>();
         rolesEmployee.add(roleEmployee);
         employee.setRoles(rolesEmployee);
-        // employee.setPermissions(permissionsEmployee);
+        employee.setPermissions(permissionsEmployee);
         userService.save(employee);
 
         User user = new User();
@@ -179,7 +179,7 @@ public class CreateRolesAndUsers implements CommandLineRunner {
         Set<Role> rolesUser = new HashSet<Role>();
         rolesUser.add(roleUser);
         user.setRoles(rolesUser);
-        // user.setPermissions(permissionsUser);
+        user.setPermissions(permissionsUser);
         userService.save(user);
     }
 }
