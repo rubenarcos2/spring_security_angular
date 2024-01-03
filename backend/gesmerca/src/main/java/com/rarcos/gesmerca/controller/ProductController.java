@@ -69,9 +69,29 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductDto>> list() {
         List<Product> list = productService.list();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        List<ProductDto> listDto = new ArrayList<>();
+        for (Product prod : list) {
+            listDto.add(new ProductDto(
+                    prod.getId(),
+                    prod.getName(),
+                    prod.getDescription(),
+                    prod.getSupplier(),
+                    supplierService.getOne(prod.getSupplier()).get().getName(),
+                    prod.getImage(),
+                    null,
+                    null,
+                    null,
+                    prod.getPrice(),
+                    null,
+                    null,
+                    null,
+                    prod.getStock(),
+                    prod.getCreatedAt(),
+                    prod.getUpdatedAt()));
+        }
+        return new ResponseEntity<>(listDto, HttpStatus.OK);
     }
 
     @GetMapping("/allbysupplier/{idSupplier}")
@@ -95,14 +115,21 @@ public class ProductController {
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         if (!productService.existsById(id))
             return new ResponseEntity<>(new Error("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
-        ProductDto product = new ProductDto(productService.getOne(id).get().getId(),
+        ProductDto product = new ProductDto(
+                productService.getOne(id).get().getId(),
                 productService.getOne(id).get().getName(), productService.getOne(id).get().getDescription(),
                 productService.getOne(id).get().getSupplier(),
                 supplierService.getOne(productService.getOne(id).get().getSupplier()).get().getName(),
-                productService.getOne(id).get().getImage(), productService.getOne(id).get().getThumbail_32x32(),
+                productService.getOne(id).get().getImage(),
+                productService.getOne(id).get().getThumbail_32x32(),
                 productService.getOne(id).get().getThumbail_64x64(),
-                productService.getOne(id).get().getThumbail_128x128(), productService.getOne(id).get().getPrice(),
-                productService.getOne(id).get().getStock(), productService.getOne(id).get().getCreatedAt(),
+                productService.getOne(id).get().getThumbail_128x128(),
+                productService.getOne(id).get().getPrice(),
+                Float.valueOf(0),
+                Float.valueOf(0),
+                Float.valueOf(0),
+                productService.getOne(id).get().getStock(),
+                productService.getOne(id).get().getCreatedAt(),
                 productService.getOne(id).get().getUpdatedAt());
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -178,8 +205,10 @@ public class ProductController {
         return sorts;
     }
 
-    private Integer getPriceMax(Long idProduct) {
-        Product prod = productService.getOne(idProduct).get();
-
-    }
+    /*
+     * private Integer getPriceMax(Long idProduct) {
+     * Product prod = productService.getOne(idProduct).get();
+     * 
+     * }
+     */
 }

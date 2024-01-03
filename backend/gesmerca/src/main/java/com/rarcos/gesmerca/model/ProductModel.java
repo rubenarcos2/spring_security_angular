@@ -15,6 +15,7 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     private String name;
     private String description;
     private Long supplier;
+    private String supplierName;
     private String image;
     private String thumbail_32x32;
     private String thumbail_64x64;
@@ -118,6 +119,14 @@ public class ProductModel extends RepresentationModel<ProductModel> {
 
     public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
 }

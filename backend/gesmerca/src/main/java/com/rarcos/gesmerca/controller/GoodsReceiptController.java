@@ -38,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 import com.rarcos.gesmerca.assemblers.GoodsReceiptModelAssembler;
 import com.rarcos.gesmerca.dto.Message;
 import com.rarcos.gesmerca.dto.PriceEstimatedDto;
+import com.rarcos.gesmerca.dto.ProductDto;
 import com.rarcos.gesmerca.dto.Error;
 import com.rarcos.gesmerca.dto.GoodsReceiptDto;
 import com.rarcos.gesmerca.dto.GoodsReceiptDtoRequest;
@@ -96,9 +97,23 @@ public class GoodsReceiptController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<GoodsReceipt>> list() {
+    public ResponseEntity<List<GoodsReceiptDto>> list() {
         List<GoodsReceipt> list = goodsReceiptService.list();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        List<GoodsReceiptDto> listDto = new ArrayList<>();
+        for (GoodsReceipt gr : list) {
+            listDto.add(new GoodsReceiptDto(
+                    gr.getId(),
+                    gr.getSupplier().getId(),
+                    supplierService.getOne(gr.getSupplier().getId()).get().getName(),
+                    gr.getUser().getId(),
+                    userService.getById(gr.getUser().getId()).get().getName(),
+                    gr.getDate().toString(),
+                    gr.getTime().toString(),
+                    gr.getDocnum(),
+                    gr.getCreatedAt(),
+                    gr.getUpdatedAt()));
+        }
+        return new ResponseEntity<>(listDto, HttpStatus.OK);
     }
 
     @GetMapping("/allbysupplier/{idSupplier}")

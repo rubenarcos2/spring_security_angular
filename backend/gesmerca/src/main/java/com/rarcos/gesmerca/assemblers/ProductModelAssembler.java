@@ -6,10 +6,16 @@ import org.springframework.stereotype.Component;
 import com.rarcos.gesmerca.controller.ProductController;
 import com.rarcos.gesmerca.entity.Product;
 import com.rarcos.gesmerca.model.ProductModel;
+import com.rarcos.gesmerca.service.SupplierService;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class ProductModelAssembler extends RepresentationModelAssemblerSupport<Product, ProductModel> {
+    @Autowired
+    SupplierService supplierService;
 
     public ProductModelAssembler() {
         super(ProductController.class, ProductModel.class);
@@ -27,6 +33,7 @@ public class ProductModelAssembler extends RepresentationModelAssemblerSupport<P
         productModel.setDescription(product.getDescription());
         productModel.setImage(product.getImage());
         productModel.setName(product.getName());
+        productModel.setSupplierName(supplierService.getOne(product.getSupplier()).get().getName());
         productModel.setPrice(product.getPrice());
         productModel.setStock(product.getStock());
         productModel.setSupplier(product.getSupplier());
