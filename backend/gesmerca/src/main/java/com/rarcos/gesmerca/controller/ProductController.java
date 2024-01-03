@@ -179,6 +179,7 @@ public class ProductController {
     }
 
     private Integer getPriceMax(Long idProduct) {
+        Product prod = productService.getOne(idProduct).get();
 
     }
 }
