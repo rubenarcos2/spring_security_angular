@@ -80,7 +80,10 @@ public class UserService {
     }
 
     public JwtDto refresh(String jwtDto) throws ParseException {
-        String token = jwtProvider.refreshToken(jwtDto);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+        String token = jwtProvider.refreshToken(newAuth);
         return new JwtDto(token);
     }
 

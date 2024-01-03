@@ -4,9 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Product } from 'src/app/models/product';
-import { Supplier } from 'src/app/models/supplier';
+import { AuthService } from 'src/app/services/auth.service';
 import { ProductService } from 'src/app/services/product.service';
-import { SupplierService } from 'src/app/services/supplier.service';
 
 @Component({
   selector: 'app-edit',
@@ -17,9 +16,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   dataForm!: FormData;
   returnUrl!: string;
-  isSubmitted: boolean = false;
+  isFormUpdating: boolean = false;
   private _product?: Product;
-  private _suppliers?: Supplier[];
   private subs: Subscription = new Subscription();
   private subs2: Subscription = new Subscription();
   private subs3: Subscription = new Subscription();
@@ -27,7 +25,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private productService: ProductService,
-    private supplierService: SupplierService,
+    protected authService: AuthService,
     private toastr: ToastrService,
     private route: ActivatedRoute,
     private router: Router
@@ -40,18 +38,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     let id;
     this.dataForm = new FormData();
-    this.route.params.subscribe(param => (id = parseInt(param['id'])));
-
-    //Get all suppliers of backend
-    this.subs = this.supplierService.getAllNoPaginated().subscribe({
-      next: result => {
-        let res = JSON.parse(JSON.stringify(result));
-        this._suppliers = res;
-      },
-      error: error => {
-        this.toastr.error(error ? error : 'Operación no autorizada');
-      },
-    });
+    this.subs = this.route.params.subscribe(param => (id = parseInt(param['id'])));
 
     //Get all products of backend
     this.subs2 = this.productService.getById(id).subscribe({
@@ -60,16 +47,31 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         this.productForm = this.formBuilder.group({
           id: [this.product?.id],
           name: [this.product?.name, [Validators.required, Validators.minLength(3)]],
-          description: [this.product?.description, [Validators.required, Validators.minLength(3)]],
-          supplier: [this.product?.supplier, Validators.required],
-          image: [],
+          description: [
+            this.product?.description,
+            [Validators.required, Validators.minLength(3), Validators.maxLength(255)],
+          ],
+          supplier: [this.product?.supplierName],
+          image: [null, Validators.pattern(/[^\s]+(.*?).(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$/)],
           price: [
             this.product?.price,
-            [Validators.required, Validators.pattern('^[0-9]*[,.][0-9]*$')],
+            [Validators.required, Validators.pattern(/^(\d+)(,\d{1,2}|\.\d{1,2})?$/)],
           ],
-          priceMin: [this.product?.priceMin],
-          priceMax: [this.product?.priceMax],
-          priceAvg: [this.product?.priceAvg],
+          priceMin: [
+            this.product?.priceMin == 0
+              ? 'Sin histórico'
+              : this.product?.priceMin?.toString().replace('.', ','),
+          ],
+          priceMax: [
+            this.product?.priceMax == 0
+              ? 'Sin histórico'
+              : this.product?.priceMax?.toString().replace('.', ','),
+          ],
+          priceAvg: [
+            this.product?.priceAvg == 0
+              ? 'Sin histórico'
+              : this.product?.priceAvg?.toString().replace('.', ','),
+          ],
           stock: [this.product?.stock, [Validators.required, Validators.pattern('^[0-9]*$')]],
         });
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
@@ -87,11 +89,10 @@ export class ProductEditComponent implements OnInit, OnDestroy {
    *
    */
   onSubmit() {
-    this.isSubmitted = true;
     this.dataForm.append('id', this.productForm.get('id')?.value);
     this.dataForm.append('name', this.productForm.get('name')?.value);
     this.dataForm.append('description', this.productForm.get('description')?.value);
-    this.dataForm.append('supplier', this.productForm.get('supplier')?.value);
+    this.dataForm.append('supplier', this.product?.supplier?.toString()!);
     this.dataForm.append(
       'price',
       this.productForm.get('price')?.value.toString().replace(/,/g, '.')
@@ -104,15 +105,13 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     this.subs3 = this.productService.update(this.dataForm).subscribe({
       next: result => {
         let res = JSON.parse(JSON.stringify(result));
-        res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
+        this.isFormUpdating = false;
         this.router.navigate([this.returnUrl || '/productos']);
+        this.toastr.success(res.message);
       },
-      error: message => {
-        this.toastr.error(message ? message : 'No se puede conectar con el servidor');
+      error: error => {
+        this.toastr.error(error ? error : 'No se puede conectar con el servidor');
       },
-    });
-    this.subs3.add(() => {
-      this.isSubmitted = false;
     });
   }
 
@@ -125,19 +124,18 @@ export class ProductEditComponent implements OnInit, OnDestroy {
    */
   onChangeInput(event: any) {
     let input = event.target.id;
-    this.isSubmitted = true;
     switch (input) {
       case 'inputName':
-        this.isSubmitted = this.productForm.get(input)?.value !== this.product?.name;
+        this.isFormUpdating = event.target.value != this.product?.name;
         break;
       case 'inputDescription':
-        this.isSubmitted = this.productForm.get(input)?.value !== this.product?.description;
+        this.isFormUpdating = event.target.value != this.product?.description;
         break;
       case 'inputPrice':
-        this.isSubmitted = this.productForm.get(input)?.value !== this.product?.price;
+        this.isFormUpdating = event.target.value != this.product?.price;
         break;
       case 'inputStock':
-        this.isSubmitted = this.productForm.get(input)?.value !== this.product?.stock;
+        this.isFormUpdating = event.target.value != this.product?.stock;
         break;
     }
   }
@@ -148,8 +146,10 @@ export class ProductEditComponent implements OnInit, OnDestroy {
    * @param  {any} file The input file
    */
   onChangeFile(file: any) {
-    this.dataForm.append('image', file.target.files[0], file.name);
-    this.isSubmitted = true;
+    if (file.target.files[0] !== undefined) {
+      this.dataForm.append('image', file.target.files[0], file.name);
+    }
+    this.isFormUpdating = file.target.files[0] !== undefined;
   }
 
   /**
@@ -157,20 +157,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
    */
   onLoadImg(event: any) {
     event.srcElement.classList.remove('spinner-border');
-  }
-
-  /**
-   * On event supplier combobox load select the supplier of product
-   *
-   * @param  {any} event The combobox event
-   */
-  onChangeCmbSupplier(event: any) {
-    let sel = event.target as HTMLSelectElement;
-    for (let i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value == this.product?.supplier) {
-        sel.options[i].selected = true;
-      }
-    }
   }
 
   /**
@@ -182,7 +168,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
    */
   @HostListener('window:beforeunload', ['$event'])
   handleClose(e: BeforeUnloadEvent): void {
-    if (!this.isSubmitted) e.returnValue = '';
+    //e.preventDefault();
+    if (this.isFormUpdating) e.returnValue = true;
   }
 
   /**
@@ -203,9 +190,5 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   get product() {
     return this._product;
-  }
-
-  get suppliers() {
-    return this._suppliers;
   }
 }

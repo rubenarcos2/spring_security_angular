@@ -43,6 +43,18 @@
   gap: 2rem;
 }
 
+.onerowgrid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+}
+
+.btns-save-cancel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 @media screen and (max-width: 720px) {
   /* We indicate how my mock-up will be structured for devices smaller than 768px*/
   .mb-3 {

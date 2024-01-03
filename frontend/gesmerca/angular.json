@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gesmerca:build:production"
+              "browserTarget": "gesmerca:build:production"
             },
             "development": {
-              "buildTarget": "gesmerca:build:development"
+              "browserTarget": "gesmerca:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -70,7 +70,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "gesmerca:build"
+            "browserTarget": "gesmerca:build"
           }
         },
         "test": {

@@ -1,9 +1,14 @@
+<div *ngIf="!goodsReceipt || !isLoaded">
+    <div colspan="6" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+    </div>
+</div>
 <div class="container">
     <div *ngIf="goodsReceipt && isLoaded" class="col-6 offset-3">
-        <form [formGroup]="goodsReceiptForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="goodsReceiptForm">
             <div class="mb-3">
                 <label for="inputDocNum" class="form-label">Número de documento</label>
-                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputDocNum"
+                <input (keyup)="onChangeInput($event)" type="text" class="form-control" id="inputDocNum"
                     formControlName="docnum">
                 <div class="form-text text-danger"
                     *ngIf="goodsReceiptFormControls['docnum'].invalid && (goodsReceiptFormControls['docnum'].dirty || goodsReceiptFormControls['docnum'].touched)">
@@ -20,7 +25,7 @@
                             formControlName="suppliername" readonly>
                         &nbsp;
                         <a *ngIf="authService.hasPermission('supplier-edit')"
-                            href="./proveedores/editar/{{goodsReceipt.idsupplier}}"><img
+                            href="./proveedores/editar/{{goodsReceipt.idSupplier}}"><img
                                 src="../../assets/img/icons/suppliers.png" width="32px" height="32px"
                                 alt="Ver datos del proveedor" title="Ver datos del proveedor"></a>
                         <div class="form-text text-danger"
@@ -33,7 +38,7 @@
                 </div>
                 <div>
                     <label for="inputUser" class="form-label">Usuario</label>
-                    <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputUser"
+                    <input (keyup)="onChangeInput($event)" type="text" class="form-control" id="inputUser"
                         formControlName="username" readonly>
                     <div class="form-text text-danger"
                         *ngIf="goodsReceiptFormControls['iduser'].invalid && (goodsReceiptFormControls['iduser'].dirty || goodsReceiptFormControls['iduser'].touched)">
@@ -74,7 +79,8 @@
                 </div>
             </div>
             <br>
-            <table *ngIf="authService.hasPermission('goodsreceipt-list')" class="table table-striped">
+            <table *ngIf="goodsReceiptProducts && authService.hasPermission('goodsreceipt-list')"
+                class="table table-striped">
                 <thead>
                     <tr>
                         <th></th>
@@ -88,17 +94,23 @@
                 <tbody>
                     <tr *ngFor="let goodsReceiptProduct of goodsReceiptProducts">
                         <td></td>
-                        <td><span *ngIf="!goodsReceiptProduct.nameproduct"
-                                class="spinner-border spinner-border-sm"></span>{{goodsReceiptProduct.nameproduct}}</td>
+                        <td><span *ngIf="!goodsReceiptProduct.nameProduct"
+                                class="spinner-border spinner-border-sm"></span>{{goodsReceiptProduct.nameProduct}}</td>
                         <td>{{goodsReceiptProduct.quantity}} ud/s</td>
                         <td>{{goodsReceiptProduct.price | currency: 'EUR'}}</td>
-                        <td>
+                        <td
+                            *ngIf="authService.hasPermission('product-edit') || authService.hasPermission('product-delete')">
+                            <a *ngIf="authService.hasPermission('product-edit')" title="Ver/Editar"
+                                routerLink="/productos/editar/{{goodsReceiptProduct.idProduct}}"
+                                class="btn btn-sm btn-primary me-2"><i class="fa-regular fa-pen-to-square"></i>
+                            </a>
                             <button *ngIf="authService.hasPermission('goodsreceipt-delete')"
-                                (click)="deleteProduct(goodsReceiptProduct.nameproduct, goodsReceiptProduct.id)"
-                                class="btn btn-sm btn-danger btn-delete-user"
+                                (click)="deleteProduct(goodsReceiptProduct.nameProduct, goodsReceiptProduct.id)"
+                                class="btn btn-sm btn-danger btn-delete-user" title="Eliminar"
                                 [disabled]="goodsReceiptProduct.isDeleting">
                                 <span *ngIf="" class="spinner-border spinner-border-sm"></span>
-                                <span *ngIf="!goodsReceiptProduct.isDeleting">Eliminar</span>
+                                <span *ngIf="!goodsReceiptProduct.isDeleting"><i
+                                        class="fa-solid fa-trash-can"></i></span>
                             </button>
                         </td>
                         <td></td>
@@ -110,29 +122,36 @@
                     </tr>
                 </tbody>
             </table>
-            <form class="mb-3" id="productForm" [formGroup]="goodsReceiptProductForm" (ngSubmit)="onSubmitProduct()">
+            <div class="onerowgrid" *ngIf="!products" id="no-products-msg">
+                <h6>El proveedor no tiene más productos</h6>
+                &nbsp;
+                <a href="/productos/nuevo?prov={{indexSelectedSupplier}}" class="btn btn-secondary">Nuevo</a>
+            </div>
+            <br>
+            <form *ngIf="products" class="mb-3" id="productForm" [formGroup]="goodsReceiptProductForm"
+                (ngSubmit)="onSubmitProduct()">
                 <select name="select-product" id="select-product" formControlName="idproduct">
                     <option *ngFor="let product of products" value="{{product.id}}">
                         {{product.name}}</option>
                 </select>
                 <div><input style="width: 3rem;" type="number" formControlName="quantity" min="1"
-                        oninput="validity.valid||(value='');" (change)="onChangeInputProduct($event)"> ud/s</div>
+                        oninput="validity.valid||(value='');" (keyup)="onChangeInputProduct()"> ud/s</div>
                 <div><input style="width: 4rem;" type="number" min="0.01" step="0.01" formControlName="price"> €</div>
-                <button class="btn btn-primary btn-sm" type="submit"
-                    [disabled]="!goodsReceiptProductForm.valid">Añadir</button>
-                <a href="/productos/nuevo" class="btn btn-secondary">Nuevo</a>
+                <button class="btn btn-primary btn-sm" type="submit" [disabled]="!goodsReceiptProductForm.valid"
+                    title="Añadir">Añadir
+                    <i class="fa-regular fa-square-plus"></i></button>
+                <a href="/productos/nuevo?prov={{indexSelectedSupplier}}" class="btn btn-secondary btn-sm"
+                    title="Nuevo producto">Nuevo <i class="fa-solid fa-up-right-from-square"></i></a>
             </form>
-            <div class="onerow mb-3">
+            <div *ngIf="products" class="onerow mb-3">
                 <h6>Precio estimado prod. y cant. (IA):</h6>
                 <div id="priceEst" style="width: 4rem;"></div>
             </div>
-            <button type="submit" class="btn btn-primary"
-                [disabled]="!goodsReceiptForm.valid || !isSubmitted">Enviar</button>
+            <div class="btns-save-cancel">
+                <button class="btn btn-secondary" routerLink='/recepcion'>Cancelar</button>
+                <button class="btn btn-primary" (click)="onSubmit()"
+                    [disabled]="!goodsReceiptForm.valid || !isFormUpdating">Guardar</button>
+            </div>
         </form>
-    </div>
-</div>
-<div *ngIf="!goodsReceipt">
-    <div colspan="6" class="text-center">
-        <span class="spinner-border spinner-border-lg align-center"></span>
     </div>
 </div>

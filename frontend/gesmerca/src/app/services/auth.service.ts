@@ -4,6 +4,8 @@ import { map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../models/user';
+import { CheckSessionService } from './check-session.service';
+import TokenUtils from '../utils/tokenUtils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,19 +14,21 @@ export class AuthService {
   private _baseUrl = environment.baseUrl;
   private _user!: User;
 
-  constructor(private http: HttpClient, private toastr: ToastrService) {}
+  constructor(
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private checkSessionService: CheckSessionService
+  ) {}
 
   login(data: User) {
     return this.http.post(`${this._baseUrl}/auth/login`, data).pipe(
       map(result => {
         sessionStorage.setItem('authUser', JSON.stringify(result));
-        let token: String = JSON.stringify(result);
-        let decodedJWT = JSON.parse(window.atob(token.split('.')[1]));
-        data.id = decodedJWT.id;
-        data.name = decodedJWT.name;
-        data.roles = decodedJWT.roles;
-        this._user = data;
-        return decodedJWT;
+        let tokenDecode = JSON.parse(JSON.stringify(result)).token;
+        tokenDecode = JSON.parse(atob(tokenDecode.split('.')[1]));
+        this.checkSessionService.startResetIdleTimer();
+        this.checkSessionService.startCheckSession();
+        return tokenDecode;
       })
     );
   }
@@ -33,7 +37,8 @@ export class AuthService {
     return this.http.post(`${this._baseUrl}/auth/refresh`, data).pipe(
       map(result => {
         sessionStorage.setItem('authUser', JSON.stringify(result));
-        this.profile();
+        if (!this.checkSessionService.isCheckSessionActive())
+          this.checkSessionService.startCheckSession();
         return result;
       })
     );
@@ -51,19 +56,22 @@ export class AuthService {
         this._user.roles = res.roles;
         this._user.permissions = res.permissions;
         sessionStorage.setItem('permissionUser', JSON.stringify(res.permissions));
+        if (!this.checkSessionService.isCheckSessionActive())
+          this.checkSessionService.startCheckSession();
         return result;
       })
     );
   }
 
   logout() {
+    this.checkSessionService.stopCheckSession();
+    this.checkSessionService.stopIdleTimer();
+
     return this.http.get(`${this._baseUrl}/auth/logout`).pipe(
-      map(result => {
-        let msg = JSON.parse(JSON.stringify(result));
+      map(() => {
         sessionStorage.removeItem('authUser');
         sessionStorage.removeItem('userConfig');
         sessionStorage.removeItem('permissionUser');
-        this.toastr.info(msg.message);
       })
     );
   }
@@ -90,10 +98,7 @@ export class AuthService {
   }
 
   get isLoggedIn() {
-    if (sessionStorage.getItem('authUser')) {
-      return true;
-    }
-    return false;
+    return sessionStorage.getItem('authUser');
   }
 
   get user() {

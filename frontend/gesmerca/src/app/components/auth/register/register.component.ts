@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,13 +13,15 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
   isSubmitted: boolean = false;
+  returnUrl!: string;
   private subs: Subscription = new Subscription();
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   /**
@@ -29,9 +31,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
       name: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/)]],
+      password_confirmation: [
+        '',
+        [Validators.required, Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/)],
+      ],
     });
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
   }
 
   /**
@@ -47,6 +54,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.router.navigate(['/']).then(() => {
           let msg = JSON.parse(JSON.stringify(result));
           this.toastr.success(msg.message);
+          this.router.navigate([this.returnUrl || '/login']);
         });
       },
       error: error => {

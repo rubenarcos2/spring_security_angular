@@ -1,8 +1,9 @@
 export interface Product {
   id?: number;
   name?: string;
-  description?: Text;
+  description?: string;
   supplier?: string;
+  supplierName?: string;
   price?: number;
   priceMin?: number;
   priceMax?: number;

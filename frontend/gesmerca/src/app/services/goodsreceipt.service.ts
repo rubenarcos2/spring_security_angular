@@ -29,6 +29,16 @@ export class GoodsreceiptService {
     );
   }
 
+  getAllBySupplier(id: any, param?: any): Observable<GoodsReceipt[]> {
+    return this.http
+      .get<GoodsReceipt[]>(`${this.baseUrl}/goodsreceipt/allbysupplier/${id}?${param}`)
+      .pipe(
+        map(result => {
+          return result;
+        })
+      );
+  }
+
   getById(id: any): Observable<GoodsReceipt> {
     return this.http.get<GoodsReceipt>(`${this.baseUrl}/goodsreceipt/${id}`);
   }
@@ -42,14 +52,14 @@ export class GoodsreceiptService {
   }
 
   addProduct(params: any, id: any): Observable<any> {
-    return this.http.post<GoodsReceiptProduct>(
+    return this.http.put<GoodsReceiptProduct>(
       `${this.baseUrl}/goodsreceipt/${id}/product/add`,
       params
     );
   }
 
   deleteProduct(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/goodsreceipt/${id}/product/delete`, params);
+    return this.http.put(`${this.baseUrl}/goodsreceipt/${id}/product/delete`, params);
   }
 
   create(params: any): Observable<any> {
@@ -57,10 +67,10 @@ export class GoodsreceiptService {
   }
 
   update(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/goodsreceipt/update/${id}`, params);
+    return this.http.put(`${this.baseUrl}/goodsreceipt/update/${id}`, params);
   }
 
   delete(params: any, id: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/goodsreceipt/delete/${id}`, params);
+    return this.http.delete(`${this.baseUrl}/goodsreceipt/delete/${id}`, params);
   }
 }

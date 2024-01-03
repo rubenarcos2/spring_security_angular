@@ -4,15 +4,21 @@
 </div>
 <div id="search-report">
     <div>
-        <input type="text" placeholder="Núm. doc., provedor, usuario..." #filter>
-        <button class="primary" type="button" (click)="search(filter.value, $event)">
-            <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!isSearching">Buscar</span>
+        <input type="text" placeholder="Núm. doc., provedor, usuario..." #filter id="filterSearch"
+            [readonly]="isFilter">
+        <button class="btn-secondary btn-sm mb-2" type="button" (click)="search()">
+            <span *ngIf="isSearching" title="Filtrando albaranes"><i class="fa-solid fa-spinner fa-spin"></i></span>
+            <span *ngIf="!isSearching">Filtrar</span>
         </button>
     </div>
     <button id="report-pdf" class="btn-secondary btn-sm mb-2" (click)="goodsreceiptToPDF()" [disabled]="isPrintingPDF">
-        <span *ngIf="isPrintingPDF" class="spinner-border spinner-border-sm"></span>
-        <span *ngIf="!isPrintingPDF">Descargar informe PDF</span></button>
+        <span *ngIf="isPrintingPDF" title="Creando informe"><i class="fa-solid fa-spinner fa-spin"></i></span>
+        <span *ngIf="!isPrintingPDF" title="Descargar informe PDF">Informe <i
+                class="fa-solid fa-file-pdf"></i></span></button>
+</div>
+<div id="search-exclusion">
+    <input type="checkbox" id="chkFilterSearch">
+    <label for="chkFilterSearch">&nbsp;Solo por Núm. doc.</label>
 </div>
 <table *ngIf="authService.hasPermission('goodsreceipt-list')" class="table table-striped">
     <thead>
@@ -22,7 +28,9 @@
             <th>Proveedor</th>
             <th>Usuario</th>
             <th>Fecha</th>
-            <th></th>
+            <th
+                *ngIf="authService.hasPermission('goodsreceipt-edit') || authService.hasPermission('goodsreceipt-delete')">
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -34,14 +42,16 @@
             <td><span *ngIf="!goodsreceipt.userName" class="spinner-border spinner-border-sm"></span>
                 {{goodsreceipt.userName}}</td>
             <td>{{goodsreceipt.date | date: 'dd/MM/yyyy'}}</td>
-            <td>
+            <td
+                *ngIf="authService.hasPermission('goodsreceipt-edit') || authService.hasPermission('goodsreceipt-delete')">
                 <a *ngIf="authService.hasPermission('goodsreceipt-edit')" routerLink="editar/{{goodsreceipt.id}}"
-                    class="btn btn-sm btn-primary me-1">Ver/Editar</a>
+                    class="btn btn-sm btn-primary me-2" title="Ver/Editar"><i
+                        class="fa-regular fa-pen-to-square"></i></a>
                 <button *ngIf="authService.hasPermission('goodsreceipt-delete')"
                     (click)="deleteProduct(goodsreceipt.docnum, goodsreceipt.id)"
-                    class="btn btn-sm btn-danger btn-delete-user" [disabled]="goodsreceipt.isDeleting">
+                    class="btn btn-sm btn-danger btn-delete-user" [disabled]="goodsreceipt.isDeleting" title="Eliminar">
                     <span *ngIf="" class="spinner-border spinner-border-sm"></span>
-                    <span *ngIf="!goodsreceipt.isDeleting">Eliminar</span>
+                    <span *ngIf="!goodsreceipt.isDeleting"><i class="fa-solid fa-trash-can"></i></span>
                 </button>
             </td>
         </tr>
@@ -53,7 +63,7 @@
     </tbody>
 </table>
 <nav>
-    <ul class="pagination justify-content-center">
+    <ul class="pagination flex-wrap justify-content-center">
         <li class="page-item" *ngFor="let link of links">
             <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}" href="{{link.url}}"
                 (click)="onChangePagination($event)">{{link.label}}</a>

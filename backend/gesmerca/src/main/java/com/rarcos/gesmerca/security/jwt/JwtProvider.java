@@ -43,7 +43,7 @@ public class JwtProvider {
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 180))
-                .signWith(getSecret(secret))
+                .signWith(getSecret(secret), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -70,24 +70,19 @@ public class JwtProvider {
         return false;
     }
 
-    public String refreshToken(String token) throws ParseException {
-        try {
-            return Jwts.parserBuilder().setSigningKey(getSecret(secret)).build().parseClaimsJws(token)
-                    .toString();
-        } catch (ExpiredJwtException e) {
-            JWT jwt = JWTParser.parse(token);
-            JWTClaimsSet claims = jwt.getJWTClaimsSet();
-            String nombreUsuario = claims.getSubject();
-            List<String> roles = (List<String>) claims.getClaim("roles");
-
-            return Jwts.builder()
-                    .setSubject(nombreUsuario)
-                    .claim("roles", roles)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(new Date().getTime() + expiration))
-                    .signWith(getSecret(secret))
-                    .compact();
-        }
+    public String refreshToken(Authentication authentication) throws ParseException {
+        MainUser mainUser = (MainUser) authentication.getPrincipal();
+        List<String> roles = mainUser.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        return Jwts.builder()
+                .setSubject(mainUser.getUsername())
+                .claim("id", mainUser.getId())
+                .claim("name", mainUser.getName())
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + expiration * 180))
+                .signWith(getSecret(secret), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     private SecretKey getSecret(String secret) {

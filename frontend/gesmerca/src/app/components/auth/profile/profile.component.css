@@ -11,7 +11,8 @@
 @media screen and (max-width: 720px) {
   /* We indicate how my mock-up will be structured for devices smaller than 768px*/
   .list-group {
-    padding: 0px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     margin-left: -50%;
     margin-right: -50%;
   }
@@ -21,8 +22,7 @@
   /* We indicate how my mock-up will be structured for devices smaller than 768px*/
 
   .list-group {
-    padding: 0px;
-    margin-left: -50%;
-    margin-right: -50%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }

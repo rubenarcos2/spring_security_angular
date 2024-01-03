@@ -1,2 +1,4 @@
 https://github.com/cavanosa/tutorial_jwt_BACK
 https://www.youtube.com/playlist?list=PL4bT56Uw3S4z9rtwwGvuk1Mjhu5sdLSwX
+
+https://medium.com/spring-boot/invalidate-revoked-the-jwt-force-logout-the-user-from-spring-security-a20ef3a2a928

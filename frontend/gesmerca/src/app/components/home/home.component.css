@@ -1,58 +1,94 @@
-body{
-    font-family: 'Ubuntu Light' !important;
+body {
+  font-family: 'Ubuntu Light' !important;
+}
+
+#search-report {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#search-report input {
+  margin-right: 0.5rem;
 }
 
 section article {
-    display:grid;
-    grid-template-columns: 25% 25% 25% 25%;
-    align-items:center;
-    margin: 1rem;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  align-items: center;
+  margin: 1rem;
 }
 
-section article > div{
-    border: 1px solid var(--color-gray-light);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem;
-    display: grid;
-    grid-template-rows: 128px auto;
-    text-align: center;
+section article > div {
+  border: 1px solid var(--color-gray-light);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem;
+  display: grid;
+  grid-template-rows: 128px auto;
+  text-align: center;
+  overflow: ellipsis;
 }
 
-section article > div div:nth-child(2){ /* Product text*/
-    font-weight: bold;
-    font-size: 1.5rem;
+/* Product text */
+section article > div p:nth-child(2) {
+  margin: 0;
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-section article > div div:nth-child(4){ /* Price text*/
-    font-size: 1.25rem;
+/* Description text */
+section article > div p:nth-child(3) {
+  margin: 0;
+  white-space: nowrap;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-section article img{
-    width: auto;
-    height: 128px;
+/* Price text */
+section article > div p:nth-child(4) {
+  margin: 0;
+  font-size: 1.25rem;
 }
 
-@media screen and (max-width:980px) {
-    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
-
-    section article {
-        grid-template-columns: auto auto auto;
-    }
+section article img {
+  width: fit-content;
+  height: 128px;
+  border-radius: 0.5rem;
 }
 
-@media screen and (max-width:720px) {
-    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
-
-    section article {
-        grid-template-columns: auto auto;
-    }
+nav {
+  width: auto;
 }
 
-@media screen and (max-width:480px) {
-    /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+@media screen and (max-width: 980px) {
+  /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
 
-    section article {
-        grid-template-columns: auto;
-    }
+  section article {
+    grid-template-columns: auto auto auto;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+
+  section article {
+    grid-template-columns: auto auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Indicamos como se estructurará mi maqueta para dispositivos menores de 768px*/
+
+  section article {
+    grid-template-columns: auto;
+  }
 }

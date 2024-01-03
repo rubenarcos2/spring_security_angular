@@ -6,11 +6,15 @@
 
 .config-list {
   display: grid;
-  grid-template-columns: 5rem 10rem auto 5rem;
+  grid-template-columns: 10rem auto 5rem;
   justify-items: center;
 }
 
-p {
+.config-list:has(> span:last-child:nth-child(4)) {
+  grid-template-columns: 5rem 10rem auto 5rem;
+}
+
+.subtitle {
   text-align: center;
   font-size: small;
 }

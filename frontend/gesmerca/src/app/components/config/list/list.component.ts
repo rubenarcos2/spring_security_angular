@@ -19,9 +19,10 @@ export class ConfigListComponent implements OnInit, OnDestroy {
   private subs2: Subscription = new Subscription();
   private subs3: Subscription = new Subscription();
   private subs4: Subscription = new Subscription();
+  private subs5: Subscription = new Subscription();
 
   constructor(
-    private authService: AuthService,
+    protected authService: AuthService,
     private configService: ConfigService,
     private toastr: ToastrService
   ) {}
@@ -44,7 +45,7 @@ export class ConfigListComponent implements OnInit, OnDestroy {
             this.toastr.error(error ? error : 'No se puede conectar con el servidor');
           },
         });
-        this.configService.getAll().subscribe({
+        this.subs2 = this.configService.getAll().subscribe({
           next: result => {
             this._configsGeneral = result;
             this.mixConfigsSpecifyWithGeneral();
@@ -76,7 +77,7 @@ export class ConfigListComponent implements OnInit, OnDestroy {
           switchValue.setAttribute('disabled', '');
           let dataForm = new FormData();
           dataForm.append('name', name);
-          this.subs2 = this.configService.deleteUserConfig(dataForm, this._user.id).subscribe({
+          this.subs3 = this.configService.deleteUserConfig(dataForm, this._user.id).subscribe({
             next: result => {
               let res = JSON.parse(JSON.stringify(result));
               this.toastr.success(res.message);
@@ -93,7 +94,7 @@ export class ConfigListComponent implements OnInit, OnDestroy {
           let desc = document.getElementById('desc-' + name);
           if (desc !== null) dataForm.append('description', (desc as HTMLInputElement).value);
 
-          this.subs3 = this.configService.updateUserConfig(dataForm, this._user.id).subscribe({
+          this.subs4 = this.configService.updateUserConfig(dataForm, this._user.id).subscribe({
             next: result => {
               let res = JSON.parse(JSON.stringify(result));
               this.toastr.success(res.message);
@@ -121,7 +122,7 @@ export class ConfigListComponent implements OnInit, OnDestroy {
     let desc = document.getElementById('desc-' + name) as HTMLInputElement;
     if (desc !== null) dataForm.append('description', desc.value);
 
-    this.subs4 = this.configService.updateUserConfig(dataForm, this._user.id).subscribe({
+    this.subs5 = this.configService.updateUserConfig(dataForm, this._user.id).subscribe({
       next: result => {
         let res = JSON.parse(JSON.stringify(result));
         this.toastr.success(res.message);
@@ -159,6 +160,7 @@ export class ConfigListComponent implements OnInit, OnDestroy {
     this.subs2.unsubscribe();
     this.subs3.unsubscribe();
     this.subs4.unsubscribe();
+    this.subs5.unsubscribe();
   }
 
   get configs(): Config[] {

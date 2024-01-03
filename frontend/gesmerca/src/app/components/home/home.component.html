@@ -1,22 +1,33 @@
 <div *ngIf="!products" class="text-center">
     <span class="spinner-border spinner-border-lg align-center"></span>
 </div>
+
 <section *ngIf="products">
+    <div id="search-report">
+        <div>
+            <input type="text" placeholder="Nombre, desc, precio" #filter id="filterSearch" [readonly]="isFilter">
+            <button class="btn-secondary btn-sm mb-2" type="button" (click)="search()">
+                <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
+                <span *ngIf="!isSearching">Filtrar</span>
+            </button>
+        </div>
+    </div>
     <article>
         <div *ngFor="let product of products">
             <div>
                 <img class="spinner-border spinner-border-lg align-center" (load)="onLoadImg($event)"
                     src="{{product.thumbail_128x128}}" width="128" height="128">
             </div>
-            <div>{{product.name}}</div>
-            <div>{{product.description}}</div>
-            <div>{{product.price | currency: 'EUR'}}</div>
+            <p title="{{product.name}}">{{product.name}}</p>
+            <p title="{{product.description}}">{{product.description}}</p>
+            <p>{{product.price | currency: 'EUR'}}</p>
         </div>
     </article>
     <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination flex-wrap justify-content-center">
             <li class="page-item" *ngFor="let link of links">
-                <a class="page-link" href="{{link.href}}" (click)="onChangePagination($event)">{{link.label}}</a>
+                <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}"
+                    href="{{link.href}}" (click)="onChangePagination($event)">{{link.label}}</a>
             </li>
         </ul>
     </nav>

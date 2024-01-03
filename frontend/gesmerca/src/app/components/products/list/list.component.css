@@ -9,3 +9,7 @@
 #search-report input {
   margin-right: 0.5rem;
 }
+
+table td:nth-child(7) {
+  text-align: center;
+}

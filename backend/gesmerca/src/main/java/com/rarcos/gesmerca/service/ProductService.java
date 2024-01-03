@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.rarcos.gesmerca.entity.Product;
+import com.rarcos.gesmerca.entity.Supplier;
 import com.rarcos.gesmerca.repository.ProductRepository;
 
 import jakarta.transaction.Transactional;
@@ -26,6 +27,10 @@ public class ProductService {
 
     public Page<Product> listPaginated(Pageable pageable) {
         return productRepository.findAll(pageable);
+    }
+
+    public Page<Product> listPaginatedBySupplier(Supplier supplier, Pageable pageable) {
+        return productRepository.findBySupplier(supplier, pageable);
     }
 
     public Optional<Product> getOne(Long id) {

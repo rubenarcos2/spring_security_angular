@@ -1,6 +1,9 @@
 package com.rarcos.gesmerca.security.jwt;
 
+import com.rarcos.gesmerca.security.service.TokenBlacklist;
 import com.rarcos.gesmerca.security.service.UserDetailsServiceImpl;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +29,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     JwtProvider jwtProvider;
 
     @Autowired
+    TokenBlacklist tokenBlacklist;
+
+    @Autowired
     UserDetailsServiceImpl userDetailsService;
 
     @Override
@@ -33,7 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = getToken(req);
-            if (token != null && jwtProvider.validateToken(token)) {
+            if (token != null && jwtProvider.validateToken(token) && !tokenBlacklist.isBlacklisted(token)) {
                 String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
 
@@ -41,6 +47,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                         userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
+        } catch (ExpiredJwtException e) {
+            res.setStatus(440);
+            res.getWriter().write(e.getMessage());
+            return;
         } catch (Exception e) {
             logger.error("Error en el método doFilter " + e.getMessage());
         }

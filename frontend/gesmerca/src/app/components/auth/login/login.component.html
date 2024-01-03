@@ -8,7 +8,7 @@
       <div class="form-text text-danger"
         *ngIf="loginFormControls['userName'].invalid && (loginFormControls['userName'].dirty || loginFormControls['userName'].touched)">
         <ng-container *ngIf="loginFormControls['userName'].errors?.['required']">
-          Introduzca una dirección de email.
+          Introduzca un usuario.
         </ng-container>
       </div>
     </div>
@@ -26,19 +26,21 @@
         </ng-container>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || isSubmitted">Enviar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || isFormUpdating">Enviar</button>
   </form>
 </div>
 <div style="text-align: center;">
   <h3>Rol de Administrador</h3>
-  <p>Uss : admin&#64;admin.com</p>
+  <p>Uss : admin</p>
   <p>Pass: administrador</p>
   <br>
-  <h3>Rol de Empleado</h3>
-  <p>Uss : employee&#64;employee.com</p>
+  <h3>Rol de Administrativo / Almacenista</h3>
+  <p>Uss : employee</p>
   <p>Pass: empleado</p>
   <br>
-  <h3>Rol de Usuario</h3>
-  <p>Uss : user&#64;user.com</p>
+  <h3>Rol de Usuario *</h3>
+  <p>Uss : user</p>
   <p>Pass: usuario</p>
+  <br>
+  <h6>Altas nuevas pendientes de asignar permisos</h6>
 </div>

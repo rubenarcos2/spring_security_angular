@@ -3,15 +3,20 @@ package com.rarcos.gesmerca.entity;
 import java.time.ZonedDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -20,7 +25,10 @@ public class Product {
     private Long id;
     private String name;
     private String description;
-    private Long supplier;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "supplier")
+    private Supplier supplier;
     private String image;
     private String thumbail_32x32;
     private String thumbail_64x64;
@@ -38,7 +46,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, Long supplier, String image, String thumbail_32x32,
+    public Product(String name, String description, Supplier supplier, String image, String thumbail_32x32,
             String thumbail_64x64, String thumbail_128x128, float price, int stock, ZonedDateTime createdAt,
             ZonedDateTime updatedAt) {
         this.name = name;
@@ -75,10 +83,10 @@ public class Product {
     }
 
     public Long getSupplier() {
-        return supplier;
+        return supplier.getId();
     }
 
-    public void setSupplier(Long supplier) {
+    public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
 

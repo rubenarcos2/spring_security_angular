@@ -37,13 +37,13 @@ public class CreateProducts implements CommandLineRunner {
             Long idSupplier = new Long(String.valueOf(faker.number().numberBetween(1, 50)));
             Supplier supplier = supplierService.getOne(idSupplier).get();
             Product product = new Product(faker.commerce().productName(),
-                    "Descripción del producto " + faker.commerce().productName(), supplier.getId(),
-                    "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299.png",
-                    "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_32x32.png",
-                    "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_64x64.png",
-                    "https://vps.rarcos.com:10449/storage/assets/img/products/a93607e8c26b715e4ed44e1c07da7299_128x128.png",
+                    "Descripción del producto " + faker.commerce().productName(), supplier,
+                    "https://vps.rarcos.com:10449/storage/assets/img/products/no-image.png",
+                    "https://vps.rarcos.com:10449/storage/assets/img/products/no-image_32x32.png",
+                    "https://vps.rarcos.com:10449/storage/assets/img/products/no-image_64x64.png",
+                    "https://vps.rarcos.com:10449/storage/assets/img/products/no-image_128x128.png",
                     Float.valueOf(faker.commerce().price().replace(',', '.')),
-                    98, ZonedDateTime.now(), ZonedDateTime.now());
+                    0, ZonedDateTime.now(), ZonedDateTime.now());
             productService.save(product);
         }
 

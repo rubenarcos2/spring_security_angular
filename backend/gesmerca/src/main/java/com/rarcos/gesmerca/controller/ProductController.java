@@ -25,11 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rarcos.gesmerca.assemblers.ProductModelAssembler;
 import com.rarcos.gesmerca.dto.Message;
+import com.rarcos.gesmerca.dto.ProductDto;
 import com.rarcos.gesmerca.dto.Error;
 import com.rarcos.gesmerca.dto.ProductDtoRequest;
 import com.rarcos.gesmerca.entity.Product;
 import com.rarcos.gesmerca.model.ProductModel;
 import com.rarcos.gesmerca.service.ProductService;
+import com.rarcos.gesmerca.service.SupplierService;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
@@ -43,6 +45,9 @@ public class ProductController {
     ProductService productService;
 
     @Autowired
+    SupplierService supplierService;
+
+    @Autowired
     private ProductModelAssembler productModelAssembler;
 
     @Autowired
@@ -52,7 +57,7 @@ public class ProductController {
     public ResponseEntity<PagedModel<ProductModel>> listPagination(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "") List<String> sortList,
+            @RequestParam(defaultValue = "updatedAt") List<String> sortList,
             @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         // create Pageable object using the page, size and sort details
         Pageable pageable = PageRequest.of(page, size, Sort.by(createSortOrder(sortList, sortOrder.toString())));
@@ -69,11 +74,36 @@ public class ProductController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @GetMapping("/allbysupplier/{idSupplier}")
+    public ResponseEntity<PagedModel<ProductModel>> listPaginationBySupplier(
+            @PathVariable("idSupplier") Long idSupplier,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "updatedAt") List<String> sortList,
+            @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
+        // create Pageable object using the page, size and sort details
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createSortOrder(sortList, sortOrder.toString())));
+        // Use the pagedResourcesAssembler and productModelAssembler to convert data to
+        // PagedModel format
+        Page<Product> productPage = productService.listPaginatedBySupplier(supplierService.getOne(idSupplier).get(),
+                pageable);
+        PagedModel<ProductModel> pagedModel = pagedResourcesAssembler.toModel(productPage, productModelAssembler);
+        return new ResponseEntity<>(pagedModel, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         if (!productService.existsById(id))
             return new ResponseEntity<>(new Error("No existe un producto para id dado"), HttpStatus.NOT_FOUND);
-        Product product = productService.getOne(id).get();
+        ProductDto product = new ProductDto(productService.getOne(id).get().getId(),
+                productService.getOne(id).get().getName(), productService.getOne(id).get().getDescription(),
+                productService.getOne(id).get().getSupplier(),
+                supplierService.getOne(productService.getOne(id).get().getSupplier()).get().getName(),
+                productService.getOne(id).get().getImage(), productService.getOne(id).get().getThumbail_32x32(),
+                productService.getOne(id).get().getThumbail_64x64(),
+                productService.getOne(id).get().getThumbail_128x128(), productService.getOne(id).get().getPrice(),
+                productService.getOne(id).get().getStock(), productService.getOne(id).get().getCreatedAt(),
+                productService.getOne(id).get().getUpdatedAt());
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
@@ -94,7 +124,8 @@ public class ProductController {
                     HttpStatus.BAD_REQUEST);
         if (productService.existsByName(productDto.getName()))
             return new ResponseEntity<>(new Error("El nombre del producto ya existe"), HttpStatus.BAD_REQUEST);
-        Product product = new Product(productDto.getName(), productDto.getDescription(), productDto.getSupplier(),
+        Product product = new Product(productDto.getName(), productDto.getDescription(),
+                supplierService.getOne(productDto.getSupplier()).get(),
                 productDto.getImage(), null, null, null,
                 productDto.getPrice(), productDto.getStock(), ZonedDateTime.now(), ZonedDateTime.now());
         productService.save(product);
@@ -115,7 +146,7 @@ public class ProductController {
                     HttpStatus.BAD_REQUEST);
         Product product = productService.getOne(productDto.getId()).get();
         product.setName(productDto.getName());
-        product.setSupplier(productDto.getSupplier());
+        product.setSupplier(supplierService.getOne(productDto.getSupplier()).get());
         product.setDescription(productDto.getDescription());
         product.setImage(productDto.getImage());
         product.setPrice(productDto.getPrice());
@@ -145,5 +176,9 @@ public class ProductController {
             sorts.add(new Sort.Order(direction, sort));
         }
         return sorts;
+    }
+
+    private Integer getPriceMax(Long idProduct) {
+
     }
 }

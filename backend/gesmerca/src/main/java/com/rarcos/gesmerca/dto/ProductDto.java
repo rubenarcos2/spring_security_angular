@@ -12,12 +12,16 @@ public class ProductDto {
     private String name;
     private String description;
     private Long supplier;
+    private String supplierName;
     private String image;
     private String thumbail_32x32;
     private String thumbail_64x64;
     private String thumbail_128x128;
     @Min(value = 0, message = "El precio del producto debe ser mayor a 0")
     private Float price;
+    private Float priceMin;
+    private Float priceMax;
+    private Float priceAvg;
     @Min(value = -1, message = "El stock del producto no debe ser negativo")
     private int stock;
     private ZonedDateTime createdAt;
@@ -28,19 +32,24 @@ public class ProductDto {
 
     public ProductDto(@NotNull(message = "El producto debe tener un id") Long id,
             @NotNull(message = "El producto debe tener un nombre") String name, String description, Long supplier,
-            String image, String thumbail_32x32, String thumbail_64x64, String thumbail_128x128,
-            @Min(value = 0, message = "El precio del producto debe ser mayor a 0") Float price,
+            String supplierName, String image, String thumbail_32x32, String thumbail_64x64, String thumbail_128x128,
+            @Min(value = 0, message = "El precio del producto debe ser mayor a 0") Float price, Float priceMin,
+            Float priceMax, Float priceAvg,
             @Min(value = -1, message = "El stock del producto no debe ser negativo") int stock, ZonedDateTime createdAt,
             ZonedDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.supplier = supplier;
+        this.supplierName = supplierName;
         this.image = image;
         this.thumbail_32x32 = thumbail_32x32;
         this.thumbail_64x64 = thumbail_64x64;
         this.thumbail_128x128 = thumbail_128x128;
         this.price = price;
+        this.priceMin = priceMin;
+        this.priceMax = priceMax;
+        this.priceAvg = priceAvg;
         this.stock = stock;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -76,6 +85,14 @@ public class ProductDto {
 
     public void setSupplier(Long supplier) {
         this.supplier = supplier;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public String getImage() {
@@ -116,6 +133,30 @@ public class ProductDto {
 
     public void setPrice(Float price) {
         this.price = price;
+    }
+
+    public Float getPriceMin() {
+        return priceMin;
+    }
+
+    public void setPriceMin(Float priceMin) {
+        this.priceMin = priceMin;
+    }
+
+    public Float getPriceMax() {
+        return priceMax;
+    }
+
+    public void setPriceMax(Float priceMax) {
+        this.priceMax = priceMax;
+    }
+
+    public Float getPriceAvg() {
+        return priceAvg;
+    }
+
+    public void setPriceAvg(Float priceAvg) {
+        this.priceAvg = priceAvg;
     }
 
     public int getStock() {

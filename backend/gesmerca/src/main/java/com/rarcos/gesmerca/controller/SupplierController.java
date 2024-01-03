@@ -53,7 +53,7 @@ public class SupplierController {
     public ResponseEntity<PagedModel<SupplierModel>> listPagination(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "") List<String> sortList,
+            @RequestParam(defaultValue = "updatedAt") List<String> sortList,
             @RequestParam(defaultValue = "DESC") Sort.Direction sortOrder) {
         // create Pageable object using the page, size and sort details
         Pageable pageable = PageRequest.of(page, size, Sort.by(createSortOrder(sortList, sortOrder.toString())));

@@ -2,8 +2,13 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subscription, first } from 'rxjs';
+import { Product } from 'src/app/models/product';
 import { Supplier } from 'src/app/models/supplier';
+import { GoodsReceipt } from 'src/app/models/goodsreceipt';
+import { AuthService } from 'src/app/services/auth.service';
+import { GoodsreceiptService } from 'src/app/services/goodsreceipt.service';
+import { ProductService } from 'src/app/services/product.service';
 import { SupplierService } from 'src/app/services/supplier.service';
 
 @Component({
@@ -15,14 +20,26 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
   supplierForm!: FormGroup;
   dataForm!: FormData;
   returnUrl!: string;
-  isSubmitted: boolean = false;
+  isFormUpdating: boolean = false;
   private _supplier?: Supplier;
+  private _products?: Product[];
+  private _goodsReceipts?: GoodsReceipt[];
+  private _linksProducts?: any[];
+  private _linksGoodReceipts?: any[];
   private subs: Subscription = new Subscription();
   private subs2: Subscription = new Subscription();
+  private subs3: Subscription = new Subscription();
+  private subs4: Subscription = new Subscription();
+  private subs5: Subscription = new Subscription();
+  private subs6: Subscription = new Subscription();
+  private subs7: Subscription = new Subscription();
 
   constructor(
     private formBuilder: FormBuilder,
     private supplierService: SupplierService,
+    private productService: ProductService,
+    private goodsreceiptService: GoodsreceiptService,
+    public authService: AuthService,
     private toastr: ToastrService,
     private route: ActivatedRoute,
     private router: Router
@@ -35,10 +52,10 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     let id;
     this.dataForm = new FormData();
-    this.route.params.subscribe(param => (id = parseInt(param['id'])));
+    this.subs = this.route.params.subscribe(param => (id = parseInt(param['id'])));
 
     //Get all suppliers of backend
-    this.subs = this.supplierService.getById(id).subscribe({
+    this.subs2 = this.supplierService.getById(id).subscribe({
       next: result => {
         this._supplier = result;
         this.supplierForm = this.formBuilder.group({
@@ -58,6 +75,111 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
         this.toastr.error(error ? error : 'Operación no autorizada');
       },
     });
+
+    //Get all products by supplier of backend
+    this.subs3 = this.productService
+      .getAllBySupplier(id)
+      .pipe(first())
+      .subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          if (res._embedded.productModelList.length > 0) {
+            console.log(res);
+            this._products = res.data;
+            this._linksProducts = [];
+            if (res.page.totalPages > 1) {
+              if (res._links.first) {
+                this._linksProducts.push(res._links.first);
+                this._linksProducts[this._linksProducts.length - 1].label = 'Primero';
+                this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                  this._linksProducts.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.prev) {
+                this._linksProducts.push(res._links.prev);
+                this._linksProducts[this._linksProducts.length - 1].label = 'Anterior';
+                this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                  this._linksProducts.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.next) {
+                this._linksProducts.push(res._links.next);
+                this._linksProducts[this._linksProducts.length - 1].label = 'Siguiente';
+                this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                  this._linksProducts.length - 1
+                ].href.replace('undefined&', '');
+              }
+              if (res._links.last) {
+                this._linksProducts.push(res._links.last);
+                this._linksProducts[this._linksProducts.length - 1].label = 'Último';
+                this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                  this._linksProducts.length - 1
+                ].href.replace('undefined&', '');
+              }
+            }
+            this._products = res._embedded.productModelList;
+          }
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
+
+    //Get all goods receipts by supplier of backend
+    this.subs4 = this.goodsreceiptService
+      .getAllBySupplier(id)
+      .pipe(first())
+      .subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          if (res._embedded.goodsReceiptModelList.length > 0) {
+            this._linksGoodReceipts = [];
+            if (res.page.totalPages > 1) {
+              if (res._links.first) {
+                this._linksGoodReceipts.push(res._links.first);
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Primero';
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                  this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                    'undefined&',
+                    ''
+                  );
+              }
+              if (res._links.prev) {
+                this._linksGoodReceipts.push(res._links.prev);
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Anterior';
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                  this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                    'undefined&',
+                    ''
+                  );
+              }
+              if (res._links.next) {
+                this._linksGoodReceipts.push(res._links.next);
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Siguiente';
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                  this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                    'undefined&',
+                    ''
+                  );
+              }
+              if (res._links.last) {
+                this._linksGoodReceipts.push(res._links.last);
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Último';
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                  this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                    'undefined&',
+                    ''
+                  );
+              }
+            }
+            this._goodsReceipts = res._embedded.goodsReceiptModelList;
+            console.log(this.goodsReceipts);
+          }
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
   }
 
   /**
@@ -67,7 +189,6 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
    *
    */
   onSubmit() {
-    this.isSubmitted = true;
     this.dataForm.append('id', this.supplierForm.get('id')?.value);
     this.dataForm.append('cifNif', this.supplierForm.get('cifNif')?.value);
     this.dataForm.append('name', this.supplierForm.get('name')?.value);
@@ -79,21 +200,20 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
     this.dataForm.append('notes', this.supplierForm.get('notes')?.value);
 
     //Update supplier's data to backend
-    this.subs2 = this.supplierService.update(this.dataForm).subscribe({
-      next: result => {
-        let res = JSON.parse(JSON.stringify(result));
-        res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
-
-        //On successful operation redirect to supplier's page
-        this.router.navigate([this.returnUrl || '/proveedores']);
-      },
-      error: message => {
-        this.toastr.error(message ? message : 'No se puede conectar con el servidor');
-      },
-    });
-    this.subs2.add(() => {
-      this.isSubmitted = false;
-    });
+    this.subs5 = this.supplierService
+      .update(this.dataForm, this.supplierForm.get('id')?.value)
+      .subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          this.isFormUpdating = false;
+          //On successful operation redirect to supplier's page
+          this.router.navigate([this.returnUrl || '/proveedores']);
+          this.toastr.success(res.message);
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
   }
 
   /**
@@ -105,33 +225,153 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
    */
   onChangeInput(event: any) {
     let input = event.target.id;
-    this.isSubmitted = true;
     switch (input) {
       case 'inputCifNif':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.cifNif;
+        this.isFormUpdating = event.target.value != this.supplier?.cifNif;
         break;
       case 'inputName':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.name;
+        this.isFormUpdating = event.target.value != this.supplier?.name;
         break;
       case 'inputAddress':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.address;
+        this.isFormUpdating = event.target.value != this.supplier?.address;
         break;
       case 'inputCity':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.city;
+        this.isFormUpdating = event.target.value != this.supplier?.city;
         break;
       case 'inputPhone':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.phone;
+        this.isFormUpdating = event.target.value != this.supplier?.phone;
         break;
       case 'inputEmail':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.email;
+        this.isFormUpdating =
+          event.target.value != this.supplier?.email && event.target.value != '';
         break;
       case 'inputWeb':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.web;
+        this.isFormUpdating = event.target.value != this.supplier?.web && event.target.value != '';
         break;
       case 'inputNotes':
-        this.isSubmitted = this.supplierForm.get(input)?.value !== this.supplier?.notes;
+        this.isFormUpdating =
+          event.target.value != this.supplier?.notes && event.target.value != '';
         break;
     }
+  }
+
+  /**
+   * When load image remove spinner
+   */
+  onLoadImg(event: any) {
+    event.srcElement.classList = '';
+  }
+
+  /**
+   * Get a group of goods receipt of paginate selected
+   */
+  onChangePaginationProducts(event: any): void {
+    event.preventDefault();
+
+    //Get all products paginated
+    this.subs6 = this.productService
+      .getAllBySupplier(this.supplier?.id, event.target.href.split('?')[1])
+      .pipe(first())
+      .subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          this._linksProducts = [];
+          if (res.page.totalPages > 1) {
+            if (res._links.first) {
+              this._linksProducts.push(res._links.first);
+              this._linksProducts[this._linksProducts.length - 1].label = 'Primero';
+              this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                this._linksProducts.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.prev) {
+              this._linksProducts.push(res._links.prev);
+              this._linksProducts[this._linksProducts.length - 1].label = 'Anterior';
+              this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                this._linksProducts.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.next) {
+              this._linksProducts.push(res._links.next);
+              this._linksProducts[this._linksProducts.length - 1].label = 'Siguiente';
+              this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                this._linksProducts.length - 1
+              ].href.replace('undefined&', '');
+            }
+            if (res._links.last) {
+              this._linksProducts.push(res._links.last);
+              this._linksProducts[this._linksProducts.length - 1].label = 'Último';
+              this._linksProducts[this._linksProducts.length - 1].href = this._linksProducts[
+                this._linksProducts.length - 1
+              ].href.replace('undefined&', '');
+            }
+          }
+          this._products = res._embedded.productModelList;
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
+  }
+
+  /**
+   * Get a group of goods receipt of paginate selected
+   */
+  onChangePaginationGoodsReceipts(event: any): void {
+    event.preventDefault();
+
+    //Get all products paginated
+    this.subs7 = this.goodsreceiptService
+      .getAllBySupplier(this.supplier?.id, event.target.href.split('?')[1])
+      .pipe(first())
+      .subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          this._linksGoodReceipts = [];
+          if (res.page.totalPages > 1) {
+            if (res._links.first) {
+              this._linksGoodReceipts.push(res._links.first);
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Primero';
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                  'undefined&',
+                  ''
+                );
+            }
+            if (res._links.prev) {
+              this._linksGoodReceipts.push(res._links.prev);
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Anterior';
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                  'undefined&',
+                  ''
+                );
+            }
+            if (res._links.next) {
+              this._linksGoodReceipts.push(res._links.next);
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Siguiente';
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                  'undefined&',
+                  ''
+                );
+            }
+            if (res._links.last) {
+              this._linksGoodReceipts.push(res._links.last);
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].label = 'Último';
+              this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href =
+                this._linksGoodReceipts[this._linksGoodReceipts.length - 1].href.replace(
+                  'undefined&',
+                  ''
+                );
+            }
+          }
+          this._products = res._embedded.goodsReceiptModelList;
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
   }
 
   /**
@@ -143,7 +383,8 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
    */
   @HostListener('window:beforeunload', ['$event'])
   handleClose(e: BeforeUnloadEvent): void {
-    if (!this.isSubmitted) e.returnValue = '';
+    //e.preventDefault();
+    if (this.isFormUpdating) e.returnValue = true;
   }
 
   /**
@@ -155,6 +396,11 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subs.unsubscribe();
     this.subs2.unsubscribe();
+    this.subs3.unsubscribe();
+    this.subs4.unsubscribe();
+    this.subs5.unsubscribe();
+    this.subs6.unsubscribe();
+    this.subs7.unsubscribe();
   }
 
   get supplierFormControls() {
@@ -163,5 +409,21 @@ export class SupplierEditComponent implements OnInit, OnDestroy {
 
   get supplier() {
     return this._supplier;
+  }
+
+  get products() {
+    return this._products;
+  }
+
+  get goodsReceipts() {
+    return this._goodsReceipts;
+  }
+
+  get linksProducts() {
+    return this._linksProducts;
+  }
+
+  get linksGoodReceipts() {
+    return this._linksGoodReceipts;
   }
 }

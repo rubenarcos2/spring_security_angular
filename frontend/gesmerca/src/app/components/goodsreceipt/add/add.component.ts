@@ -24,9 +24,11 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
   goodsReceiptProductForm!: FormGroup;
   dataForm!: FormData;
   dataProductForm!: FormData;
-  isSubmitted: boolean = false;
+  isFormUpdating: boolean = false;
   isLoaded: boolean = false;
   today = new Date().toJSON().split('T')[0];
+  now = new Date().toLocaleTimeString();
+  indexSelectedSupplier: string = '';
 
   private _user?: User;
   private _suppliers?: Supplier[];
@@ -57,13 +59,8 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
    *
    */
   ngOnInit(): void {
+    this._user = this.authService.user;
     this.dataForm = new FormData();
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.onSameUrlNavigation = 'reload';
-
-    if (this.authService.getAuthUser() != null)
-      this._user = JSON.parse(JSON.stringify(this.authService.getAuthUser())).user;
-
     this.goodsReceiptForm = this.formBuilder.group({
       id: [null],
       docnum: [null, Validators.required],
@@ -108,47 +105,57 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
    *
    */
   onSubmit() {
-    this.isSubmitted = true;
-    this.dataForm.append('id', this.goodsReceiptForm.get('id')?.value);
-    this.dataForm.append('docnum', this.goodsReceiptForm.get('docnum')?.value);
-    this.dataForm.append('idsupplier', this.goodsReceiptForm.get('idsupplier')?.value);
-    this.dataForm.append('iduser', this.goodsReceiptForm.get('iduser')?.value);
-    this.dataForm.append('date', this.changeFormatDate(this.goodsReceiptForm.get('date')?.value));
-    this.dataForm.append('time', this.goodsReceiptForm.get('time')?.value);
+    if (this.goodsReceiptProducts?.length === 0) {
+      window.alert('Antes de guardar el albarán, debe de incluir producto/s');
+    } else {
+      //this.dataForm.append('id', this.goodsReceiptForm.get('id')?.value);
+      this.dataForm.append('docnum', this.goodsReceiptForm.get('docnum')?.value);
+      this.dataForm.append('idSupplier', this.goodsReceiptForm.get('idsupplier')?.value);
+      this.dataForm.append('idUser', this.goodsReceiptForm.get('iduser')?.value);
+      //this.dataForm.append('date', this.changeFormatDate(this.goodsReceiptForm.get('date')?.value));
+      this.dataForm.append('date', this.goodsReceiptForm.get('date')?.value);
+      this.dataForm.append('time', this.goodsReceiptForm.get('time')?.value);
 
-    //Create a new goods receipt on backend with form data
-    this.subs2 = this.goodsReceiptService.create(this.dataForm).subscribe({
-      next: result => {
-        let res = JSON.parse(JSON.stringify(result));
-        res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
-        //Add each product from goodsReceiptProducts to the new goodsReceipt
-        this.goodsReceiptProducts?.forEach(e => {
-          this.dataProductForm = new FormData();
-          this.dataProductForm.append('idgoodsreceipt', res.id);
-          this.dataProductForm.append('idproduct', String(e.idproduct));
-          this.dataProductForm.append('nameproduct', String(e.nameproduct));
-          this.dataProductForm.append('price', String(e.price));
-          this.dataProductForm.append('quantity', String(e.quantity));
+      //Create a new goods receipt on backend with form data
+      this.subs2 = this.goodsReceiptService.create(this.dataForm).subscribe({
+        next: result => {
+          let res = JSON.parse(JSON.stringify(result));
+          let countAdded = 0;
+          if (!res.error) {
+            //Add each product from goodsReceiptProducts to the new goodsReceipt
+            this.goodsReceiptProducts?.forEach(e => {
+              this.dataProductForm = new FormData();
+              this.dataProductForm.append('idGoodsReceipt', res.id);
+              this.dataProductForm.append('idProduct', String(e.idProduct));
+              this.dataProductForm.append('nameProduct', String(e.nameProduct));
+              this.dataProductForm.append('price', String(e.price));
+              this.dataProductForm.append('quantity', String(e.quantity));
 
-          this.subs3 = this.goodsReceiptService.addProduct(this.dataProductForm, res.id).subscribe({
-            next: result => {
-              let res2 = JSON.parse(JSON.stringify(result));
-              res2.error ? this.toastr.error(res2.error) : this.toastr.success(res2.message);
-            },
-            error: error => {
-              this.toastr.error(error.error ? error.error : 'No se puede conectar con el servidor');
-            },
-          });
-        });
-        //this.router.navigate(['/recepcion']);
-      },
-      error: error => {
-        this.toastr.error(error.error ? error.error : 'No se puede conectar con el servidor');
-      },
-    });
-    this.subs2.add(() => {
-      this.isSubmitted = false;
-    });
+              this.subs3 = this.goodsReceiptService
+                .addProduct(this.dataProductForm, res.id)
+                .subscribe({
+                  next: result => {
+                    //let res2 = JSON.parse(JSON.stringify(result));
+                    //res2.error ? this.toastr.error(res2.error) : this.toastr.success(res2.message);
+                    countAdded++;
+                    if (countAdded === this.goodsReceiptProducts?.length) {
+                      this.isFormUpdating = false;
+                      this.router.navigate(['/recepcion']);
+                      this.toastr.success(res.message);
+                    }
+                  },
+                  error: error => {
+                    this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+                  },
+                });
+            });
+          }
+        },
+        error: error => {
+          this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+        },
+      });
+    }
   }
 
   /**
@@ -158,7 +165,15 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
    *
    */
   onSubmitProduct() {
-    this.isSubmitted = true;
+    this.isFormUpdating = true;
+
+    (
+      document.getElementsByTagName('form')[1]?.getElementsByTagName('input')[0] as HTMLInputElement
+    ).value = '';
+    (
+      document.getElementsByTagName('form')[1]?.getElementsByTagName('input')[1] as HTMLInputElement
+    ).value = '';
+
     this.dataProductForm = new FormData();
     this.dataProductForm.append(
       'idgoodsreceipt',
@@ -188,8 +203,8 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
       : this.dataProductForm.append('price', '0');
 
     this._goodsReceiptProducts?.push({
-      idproduct: Number(this.dataProductForm.get('idproduct')),
-      nameproduct: String(this.dataProductForm.get('nameproduct')),
+      idProduct: Number(this.dataProductForm.get('idproduct')),
+      nameProduct: String(this.dataProductForm.get('nameproduct')),
       quantity: Number(this.dataProductForm.get('quantity')),
       price: Number(this.dataProductForm.get('price')),
     });
@@ -200,7 +215,11 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
 
     if (this.products?.length == 0) {
       document.getElementsByTagName('form')[1]?.setAttribute('hidden', 'true');
+      document.getElementsByClassName('onerow mb-3')[0]?.setAttribute('hidden', 'true');
       document.getElementsByClassName('threecolumns mb-3')[0]?.setAttribute('hidden', 'true');
+      document.getElementById('no-products-msg')?.removeAttribute('hidden');
+    } else {
+      document.getElementById('no-products-msg')?.setAttribute('hidden', 'true');
     }
   }
 
@@ -212,20 +231,24 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
    * @param  {Event} event The event combobox
    */
   onChangeSuppliers(event: any) {
+    this.isFormUpdating = true;
+
     let input = event.target.id;
-    let index = (document.getElementById(input) as HTMLSelectElement).value;
+    this.indexSelectedSupplier = (document.getElementById(input) as HTMLSelectElement).value;
+
     this._products = undefined;
 
     //Get all products of backend
     this.subs4 = this.productService.getAllNoPaginated().subscribe({
       next: result => {
         let res = JSON.parse(JSON.stringify(result));
-        this._products = res;
         //Filter only supplier's products
-        this._products = this._products?.filter(e => e.supplier == index);
-        if (this.products?.length == 0) {
-          document.getElementsByTagName('form')[1]?.setAttribute('hidden', 'true');
-          document.getElementsByClassName('threecolumns mb-3')[0]?.setAttribute('hidden', 'true');
+        let prod = res?.filter((e: Product) => e.supplier == this.indexSelectedSupplier);
+        if (prod!.length > 0) {
+          this._products = prod;
+          document.getElementById('no-products-msg')?.setAttribute('hidden', 'true');
+        } else {
+          document.getElementById('no-products-msg')?.removeAttribute('hidden');
         }
         this.isLoaded = true;
       },
@@ -233,29 +256,27 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
         this.toastr.error(error ? error : 'Operación no autorizada');
       },
     });
-
     this._goodsReceiptProducts = [];
   }
 
   /**
    * This function execute on change event input
    *
-   * Detect if input value is changed and set submited value on true change
+   * Detect if input value is changed and set isFormUpdating value on true change
    *
    * @param  {Event} event The event change input
    */
   onChangeInput(event: any) {
     let input = event.target.id;
-    this.isSubmitted = true;
     switch (input) {
       case 'inputDocNum':
-        this.isSubmitted = this.goodsReceiptForm.get('docnum')?.value !== this.goodsReceipt?.docnum;
+        this.isFormUpdating = event.target.value != '';
         break;
       case 'inputDate':
-        this.isSubmitted = this.goodsReceiptForm.get('date')?.value !== this.goodsReceipt?.date;
+        this.isFormUpdating = event.target.value != this.today;
         break;
       case 'inputTime':
-        this.isSubmitted = this.goodsReceiptForm.get('time')?.value !== this.goodsReceipt?.time;
+        this.isFormUpdating = event.target.value != this.now;
         break;
     }
   }
@@ -280,7 +301,7 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
       form.append('quantity', this.goodsReceiptProductForm.get('quantity')?.value);
 
       //Get estimated price of backend that is calculated by AI
-      this.subs6 = this.goodsReceiptService.getPriceEst(form).subscribe({
+      this.subs5 = this.goodsReceiptService.getPriceEst(form).subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
           priceEst.textContent = res.price + '€';
@@ -331,12 +352,13 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
         '¿Seguro que desea borrar el producto albarán de recepción de mercancía ' + name + '?'
       )
     ) {
-      this._goodsReceiptProducts = this._goodsReceiptProducts?.filter(e => e.idproduct != id);
+      this.isFormUpdating = true;
+      this._goodsReceiptProducts = this._goodsReceiptProducts?.filter(e => e.idProduct != id);
       this._products = undefined;
       let supplier = (document.getElementById('select-supplier') as HTMLSelectElement).value;
-
+      document.getElementsByTagName('form')[1].reset();
       //Get all products of backend
-      this.subs5 = this.productService.getAllNoPaginated().subscribe({
+      this.subs6 = this.productService.getAllNoPaginated().subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
           this._products = res;
@@ -344,9 +366,13 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
           this._products = this._products?.filter(e => e.supplier == supplier);
           //Delete products previously added to the goods receipt
           this._goodsReceiptProducts?.forEach(element => {
-            this._products = this._products?.filter(e => e.id !== element.idproduct);
+            this._products = this._products?.filter(e => e.id !== element.idProduct);
           });
-          if (this.goodsReceiptProducts?.length == 0) this.isSubmitted = false;
+          if (this.products?.length == 0) {
+            document.getElementById('no-products-msg')?.removeAttribute('hidden');
+          } else {
+            document.getElementById('no-products-msg')?.setAttribute('hidden', 'true');
+          }
         },
         error: error => {
           this.toastr.error(error ? error : 'Operación no autorizada');
@@ -364,7 +390,8 @@ export class GoodsReceiptAddComponent implements OnInit, OnDestroy {
    */
   @HostListener('window:beforeunload', ['$event'])
   handleClose(e: BeforeUnloadEvent): void {
-    if (!this.isSubmitted) e.returnValue = '';
+    //e.preventDefault();
+    if (this.isFormUpdating) e.returnValue = true;
   }
 
   /**

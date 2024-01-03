@@ -3,7 +3,8 @@
         <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label for="inputName" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="inputName" formControlName="name">
+                <input type="text" class="form-control" id="inputName" formControlName="name"
+                    (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="productFormControls['name'].invalid && (productFormControls['name'].dirty || productFormControls['name'].touched)">
                     <ng-container *ngIf="productFormControls['name'].errors?.['required']">
@@ -16,7 +17,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputDescription" class="form-label">Descripción</label>
-                <input type="text" class="form-control" id="inputDescription" formControlName="description">
+                <textarea type="text" class="form-control" id="inputDescription" formControlName="description"
+                    maxlength="255" (keyup)="onChangeInput($event)"></textarea>
                 <div class="form-text text-danger"
                     *ngIf="productFormControls['description'].invalid && (productFormControls['description'].dirty || productFormControls['description'].touched)">
                     <ng-container *ngIf="productFormControls['description'].errors?.['required']">
@@ -24,6 +26,9 @@
                     </ng-container>
                     <ng-container *ngIf="productFormControls['description'].errors?.['minlength']">
                         La descripción debe tener al menos 3 caracteres
+                    </ng-container>
+                    <ng-container *ngIf="productFormControls['description'].errors?.['maxlength']">
+                        La descripción no puede tener más de 255 caracteres
                     </ng-container>
                 </div>
             </div>
@@ -35,7 +40,8 @@
                     </div>
                 </div>
                 <div *ngIf="suppliers">
-                    <select name="select-supplier" id="select-supplier" formControlName="supplier">
+                    <select name="select-supplier" id="select-supplier" formControlName="supplier"
+                        (change)="onChangeInput($event)">
                         <option *ngFor="let supplier of suppliers" value="{{supplier.id}}"
                             id="supplier-{{supplier.id}}">
                             {{supplier.cifNif}} - {{supplier.name}}</option>
@@ -50,8 +56,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputImage" class="form-label">Imagen</label>
-                <input (change)="onChangeFile($event)" type="file" accept="image/png, image/jpeg, image/jpg, image/gif"
-                    class="form-control" id="inputImage" formControlName="image">
+                <input (change)="onChangeFile($event)" type="file" accept=".gif,.jpg,.jpeg,.png" class="form-control"
+                    id="inputImage" formControlName="image">
                 <div class="form-text text-danger"
                     *ngIf="productFormControls['image'].invalid && (productFormControls['image'].dirty || productFormControls['image'].touched)">
                     <ng-container *ngIf="productFormControls['image'].errors?.['required']">
@@ -60,27 +66,45 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="inputPrice" class="form-label">Precio</label>
-                <input type="text" class="form-control" id="inputPrice" formControlName="price">
-                <div class="form-text text-danger"
-                    *ngIf="productFormControls['price'].invalid && (productFormControls['price'].dirty || productFormControls['price'].touched)">
-                    <ng-container *ngIf="productFormControls['price'].errors?.['required']">
-                        Introduzca un precio del producto.
-                    </ng-container>
+                <div class="twocolumns">
+                    <div>
+                        <label for="inputPrice" class="form-label">Precio</label>
+                        <div class="onerow"><input class="form-control" id="inputPrice" formControlName="price"
+                                type="number" min="0.01" step="0.01" (keyup)="onChangeInput($event)"
+                                (change)="onChangeInput($event)">&nbsp;€</div>
+                        <div class="form-text text-danger"
+                            *ngIf="productFormControls['price'].invalid && (productFormControls['price'].dirty || productFormControls['price'].touched)">
+                            <ng-container *ngIf="productFormControls['price'].errors?.['required']">
+                                Introduzca un precio del producto.
+                            </ng-container>
+                            <ng-container *ngIf="productFormControls['price'].errors?.['pattern']">
+                                Introduzca un valor numérico para el precio (Ej: 9,99).
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="inputStock" class="form-label">Stock inicial</label>
+                        <div class="onerow"><input type="number" min="0" step="1" class="form-control" id="inputStock"
+                                formControlName="stock" [readonly]="!authService.hasPermission('product-delete')"
+                                (keyup)="onChangeInput($event)" (change)="onChangeInput($event)">&nbsp;ud/s
+                        </div>
+                        <div class=" form-text text-danger"
+                            *ngIf="productFormControls['stock'].invalid && (productFormControls['stock'].dirty || productFormControls['stock'].touched)">
+                            <ng-container *ngIf="productFormControls['stock'].errors?.['required']">
+                                Introduzca el stock actual del producto.
+                            </ng-container>
+                            <ng-container *ngIf="productFormControls['stock'].errors?.['pattern']">
+                                Introduzca un valor numérico entero para el stock.
+                            </ng-container>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="mb-3">
-                <label for="inputStock" class="form-label">Stock</label>
-                <input type="text" class="form-control" id="inputStock" formControlName="stock">
-                <div class="form-text text-danger"
-                    *ngIf="productFormControls['stock'].invalid && (productFormControls['stock'].dirty || productFormControls['stock'].touched)">
-                    <ng-container *ngIf="productFormControls['stock'].errors?.['required']">
-                        Introduzca el stock actual del producto.
-                    </ng-container>
-                </div>
+            <div class="btns-save-cancel">
+                <button class="btn btn-secondary" routerLink='/productos'>Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Crear
+                    producto</button>
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid || !isSubmitted">Crear
-                producto</button>
         </form>
     </div>
 </div>

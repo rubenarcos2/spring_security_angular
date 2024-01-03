@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
 import { ToastrService } from 'ngx-toastr';
@@ -6,7 +6,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Subscription, first } from 'rxjs';
 import jsPDF, { CellConfig } from 'jspdf';
 import { SupplierService } from 'src/app/services/supplier.service';
-import autoTable, { ColumnInput } from 'jspdf-autotable';
+import autoTable, { CellDef, ColumnInput } from 'jspdf-autotable';
+import StringUtils from 'src/app/utils/stringsUtils';
 
 @Component({
   templateUrl: './list.component.html',
@@ -17,18 +18,30 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private _links?: any[];
   protected isPrintingPDF = false;
   protected isSearching = false;
+  protected isFilter = false;
   private subs: Subscription = new Subscription();
   private subs2: Subscription = new Subscription();
   private subs3: Subscription = new Subscription();
   private subs4: Subscription = new Subscription();
   private subs5: Subscription = new Subscription();
+  private subs6: Subscription = new Subscription();
 
   constructor(
     private productService: ProductService,
-    private supplierService: SupplierService,
     private toastr: ToastrService,
     public authService: AuthService
   ) {}
+
+  /**
+   * Detect key enter pressed on filterSearch box
+   *
+   */
+  @HostListener('window:keydown.enter', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (!this.isFilter) {
+      this.search();
+    }
+  }
 
   /**
    * This function start on event page
@@ -37,7 +50,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     //Get all products of backend
     this.subs = this.productService
-      .getAll('')
+      .getAll()
       .pipe(first())
       .subscribe({
         next: result => {
@@ -88,18 +101,23 @@ export class ProductListComponent implements OnInit, OnDestroy {
    *
    */
   deleteProduct(name: any, id: any) {
-    if (window.confirm('¿Seguro que desea borrar el producto ' + name + '?')) {
-      const product = this.products!.find(x => x.id === id);
+    if (
+      window.confirm(
+        'La eliminación del producto implica:\n- La eliminación de los productos en los albaranes de mercancía\n  (pudiendo quedar un albarán vacío)\n- La eliminación del producto\n\n¿Seguro que desea borrar el producto ' +
+          name +
+          '?'
+      )
+    ) {
       //Get all products of backend
-      this.subs2 = this.productService.delete(product?.id).subscribe({
+      this.subs2 = this.productService.delete(id).subscribe({
         next: result => {
           //Filter only selected product
           this._products = this.products!.filter(x => x.id !== id);
           let msg = JSON.parse(JSON.stringify(result));
           this.toastr.success(msg.message);
         },
-        error: message => {
-          this.toastr.error(message ? message : 'Operación no autorizada');
+        error: error => {
+          this.toastr.error(error ? error : 'Operación no autorizada');
         },
       });
     }
@@ -170,35 +188,19 @@ export class ProductListComponent implements OnInit, OnDestroy {
    */
   productsToPDF() {
     this.isPrintingPDF = true;
-
+    let text = '';
     //Get all products of backend
     this.subs4 = this.productService.getAllNoPaginated().subscribe({
       next: result => {
-        console.log(result);
         let products = JSON.parse(JSON.stringify(result));
+        if (this.isFilter) {
+          const filterBox = document.getElementById('filterSearch') as HTMLInputElement;
+          text = StringUtils.removeSpacesAccentsAndUpperCase(filterBox?.value)!;
+          products = this.filterProducts(products, text);
+        }
         products.sort((a: { id: number }, b: { id: number }) => a.id - b.id);
-        let index = 0;
-        products.forEach((prod: { stock: string; supplier: string; image: any; id: string }) => {
-          delete prod.image;
-          prod.id = String(prod.id);
-          prod.supplier = String(prod.supplier);
-          prod.stock = String(prod.stock);
-
-          this.subs5 = this.supplierService.getById(prod.supplier).subscribe({
-            next: result => {
-              let res = JSON.parse(JSON.stringify(result));
-              prod.supplier = String(res.name);
-              if (index == products.length - 1) {
-                this.generatePDF(products);
-                this.isPrintingPDF = false;
-              }
-              index++;
-            },
-            error: error => {
-              this.toastr.error(error ? error : 'No se puede conectar con el servidor');
-            },
-          });
-        });
+        this.generatePDF(products, text);
+        this.isPrintingPDF = false;
       },
       error: error => {
         this.toastr.error(error ? error : 'No se puede conectar con el servidor');
@@ -210,8 +212,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
    * Generate PDF document with jspdf library
    *
    */
-  generatePDF(products: any) {
-    let doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'portrait' });
+  generatePDF(products: any, filter: string) {
+    let doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'landscape' });
 
     let pages = doc.getNumberOfPages();
     let pageWidth = doc.internal.pageSize.width; //Optional
@@ -219,10 +221,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     //Parser of table's columns name
     let columns: ColumnInput[] = [
-      {
-        title: 'Código',
-        key: 'id',
-      },
       {
         title: 'Nombre',
         key: 'name',
@@ -233,7 +231,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       },
       {
         title: 'Proveedor',
-        key: 'supplier',
+        key: 'supplierName',
       },
       {
         title: 'Precio',
@@ -249,7 +247,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
       columns: columns,
       body: products,
       margin: { top: 25 },
-      headStyles: { fillColor: [253, 199, 60], textColor: 'black' },
+      headStyles: { fillColor: [253, 199, 60], textColor: 'black', halign: 'center' },
+      willDrawCell: function (data) {
+        if (data.column.index === 3 && data.section === 'body') {
+          let price = +data.cell.text[0];
+          data.cell.text[0] = price.toLocaleString('es-ES', {
+            style: 'currency',
+            currency: 'EUR',
+          });
+          data.cell.styles.halign = 'right';
+        }
+        if (data.column.index === 4) data.cell.styles.halign = 'right';
+      },
     });
 
     pages = doc.getNumberOfPages();
@@ -259,44 +268,47 @@ export class ProductListComponent implements OnInit, OnDestroy {
       let horizontalPos = pageWidth / 2; //Can be fixed number
       let verticalPos = pageHeight - 5; //Can be fixed number
       doc.setFontSize(10);
-      doc.text('Informe de todos los productos', pageWidth / 2, 15, { align: 'center' });
-      doc.addImage('../../assets/img/icons/gesmerca.png', 'PNG', 190, 5, 15, 15);
+      this.isFilter
+        ? doc.text('Informe de productos filtrado por ' + filter, pageWidth / 2, 15, {
+            align: 'center',
+          })
+        : doc.text('Informe de todos los productos', pageWidth / 2, 15, { align: 'center' });
+      doc.addImage('../../assets/img/icons/gesmerca.png', 'PNG', 275, 5, 15, 15);
 
       doc.setPage(j);
+      doc.text(new Date().toLocaleString(), pageWidth - 47, verticalPos, { align: 'left' });
       doc.text(`${j} de ${pages}`, horizontalPos, verticalPos, { align: 'center' });
     }
 
-    doc.save('listado_productos.pdf');
+    doc.save(
+      'listado_productos_' +
+        new Date().toLocaleDateString('es-ES') +
+        '-' +
+        new Date().toLocaleTimeString('es-ES') +
+        '.pdf'
+    );
   }
 
   /**
    * Get a text and search on server
    *
    */
-  search(text: string, event: Event) {
-    this.isSearching = true;
-    let btn = event.target as HTMLButtonElement;
+  search() {
+    const btn = document.getElementById('search-report')!.getElementsByTagName('button')[0];
+    const filterBox = document.getElementById('filterSearch') as HTMLInputElement;
+    const text = StringUtils.removeSpacesAccentsAndUpperCase(filterBox.value);
     if (btn.textContent != 'Quitar filtro') {
       if (text != '') {
+        this.isSearching = true;
+        this.isFilter = true;
         //Get all products of backend
-        this.subs = this.productService.getAllNoPaginated().subscribe({
+        this.subs5 = this.productService.getAllNoPaginated().subscribe({
           next: result => {
-            let res = JSON.parse(JSON.stringify(result)) as Product[];
-            this._products = res.filter(
-              e =>
-                e.name?.includes(text) ||
-                e.description == new Text(text) ||
-                e.price == Number(text.replace(',', '.')) ||
-                e.stock == Number(text)
-            );
+            let products = JSON.parse(JSON.stringify(result)) as Product[];
+            this._products = this.filterProducts(products, text);
             this._links = undefined;
-            document
-              .getElementById('search-report')
-              ?.getElementsByTagName('button')[0]
-              .setAttribute('class', 'btn-danger');
-            document
-              .getElementById('search-report')!
-              .getElementsByTagName('button')[0].textContent = 'Quitar filtro';
+            btn.setAttribute('class', 'btn-danger btn-sm mb-2');
+            btn.textContent = 'Quitar filtro';
             this.isSearching = false;
           },
           error: error => {
@@ -305,8 +317,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
         });
       }
     } else {
+      this.isSearching = true;
+      this.isFilter = false;
       //Get all products of backend
-      this.subs = this.productService
+      this.subs6 = this.productService
         .getAll()
         .pipe(first())
         .subscribe({
@@ -321,8 +335,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
                   this._links.length - 1
                 ].href.replace('undefined&', '');
               }
-              if (res._links.self) {
-                this._links.push(res._links.self);
+              if (res._links.prev) {
+                this._links.push(res._links.prev);
                 this._links[this._links.length - 1].label = 'Anterior';
                 this._links[this._links.length - 1].href = this._links[
                   this._links.length - 1
@@ -344,14 +358,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
               }
             }
             this._products = res._embedded.productModelList;
-            document
-              .getElementById('search-report')
-              ?.getElementsByTagName('button')[0]
-              .setAttribute('class', '');
-            document
-              .getElementById('search-report')!
-              .getElementsByTagName('button')[0].textContent = 'Buscar';
-            document.getElementById('search-report')!.getElementsByTagName('input')[0].value = '';
+            btn.setAttribute('class', 'btn-secondary btn-sm mb-2');
+            btn.textContent = 'Filtrar';
+            btn.value = '';
+            filterBox.value = '';
             this.isSearching = false;
           },
           error: error => {
@@ -359,6 +369,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  filterProducts(products: Product[], text: string) {
+    return products.filter(
+      (e: Product) =>
+        StringUtils.removeSpacesAccentsAndUpperCase(e.name!).includes(text) ||
+        StringUtils.removeSpacesAccentsAndUpperCase(e.description!).includes(text) ||
+        StringUtils.removeSpacesAccentsAndUpperCase(e.supplierName!).includes(text) ||
+        e.price == Number(text.replace(',', '.')) ||
+        e.stock == Number(text)
+    );
   }
 
   /**
@@ -373,6 +394,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.subs3.unsubscribe();
     this.subs4.unsubscribe();
     this.subs5.unsubscribe();
+    this.subs6.unsubscribe();
   }
 
   get products() {

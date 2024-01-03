@@ -1,8 +1,15 @@
 <div class="checkSession-modal">
     <div class="checkSession-modal-body">
         <h1 id="checkSession-title">¿Estás ahí?</h1>
-
-        <a class="accept btn btn-primary" (click)="checkSessionService.close();" alt="Cerrar Ayuda">Aceptar</a>
+        <p>Tiempo para que expire la sesión: </p>
+        <p id="expireTime">{{ countDownTimer | async | date: "mm:ss" }}</p>
+        <a class="accept btn btn-secondary" (click)="checkSessionService.cancel();" alt="Cancelar sesión"
+            #cancelBtn>Cerrar sesión</a>
+        <a class="accept btn btn-primary" (click)="checkSessionService.close();" alt="Extender sesión">Seguir
+            trabajando</a>
+        <div class="progress">
+            <div class="progress-bar" style="width:{{progresBarPerc}}%"></div>
+        </div>
         <ng-content></ng-content>
     </div>
 </div>

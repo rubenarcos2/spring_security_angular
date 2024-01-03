@@ -2,9 +2,9 @@ import { Time } from '@angular/common';
 
 export interface GoodsReceipt {
   id?: number;
-  idsupplier?: number;
+  idSupplier?: number;
   supplierName?: string;
-  iduser?: number;
+  idUser?: number;
   userName?: string;
   date?: Date;
   time?: Time;

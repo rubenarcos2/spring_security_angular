@@ -4,24 +4,30 @@
 </div>
 <div id="search-report">
     <div>
-        <input type="text" placeholder="Cif/nif, nombre o telf..." #filter>
-        <button class="primary" type="button" (click)="search(filter.value, $event)">
-            <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!isSearching">Buscar</span>
+        <input type="text" placeholder="CIF/NIF, nombre o telf..." #filter id="filterSearch" [readonly]="isFilter">
+        <button class="btn-secondary btn-sm mb-2" type="button" (click)="search()">
+            <span *ngIf="isSearching" title="Filtrando proveedores"><i class="fa-solid fa-spinner fa-spin"></i></span>
+            <span *ngIf="!isSearching">Filtrar</span>
         </button>
+
     </div>
     <button id="report-pdf" class="btn-secondary btn-sm mb-2" (click)="suppliersToPDF()" [disabled]="isPrintingPDF">
-        <span *ngIf="isPrintingPDF" class="spinner-border spinner-border-sm"></span>
-        <span *ngIf="!isPrintingPDF">Descargar informe PDF</span></button>
+        <span *ngIf="isPrintingPDF" title="Creando informe"><i class="fa-solid fa-spinner fa-spin"></i></span>
+        <span *ngIf="!isPrintingPDF" title="Descargar informe PDF">Informe <i
+                class="fa-solid fa-file-pdf"></i></span></button>
+</div>
+<div id="search-exclusion">
+    <input type="checkbox" id="chkFilterSearch">
+    <label for="chkFilterSearch">&nbsp;Solo por CIF/NIF</label>
 </div>
 <table *ngIf="authService.hasPermission('supplier-list')" class="table table-striped">
     <thead>
         <tr>
             <th></th>
-            <th>Cif/Nif</th>
+            <th>CIF/NIF</th>
             <th>Nombre</th>
             <th>Teléfono</th>
-            <th></th>
+            <th *ngIf="authService.hasPermission('supplier-edit') || authService.hasPermission('supplier-delete')"></th>
         </tr>
     </thead>
     <tbody>
@@ -30,14 +36,15 @@
             <td>{{supplier.cifNif}}</td>
             <td>{{supplier.name}}</td>
             <td>{{supplier.phone}}</td>
-            <td>
+            <td *ngIf="authService.hasPermission('supplier-edit') || authService.hasPermission('supplier-delete')">
                 <a *ngIf="authService.hasPermission('supplier-edit')" routerLink="editar/{{supplier.id}}"
-                    class="btn btn-sm btn-primary me-1">Ver/Editar</a>
+                    class="btn btn-sm btn-primary me-2" title="Ver/Editar"><i
+                        class="fa-regular fa-pen-to-square"></i></a>
                 <button *ngIf="authService.hasPermission('supplier-delete')"
                     (click)="deleteSupplier(supplier.name, supplier.id)" class="btn btn-sm btn-danger btn-delete-user"
-                    [disabled]="supplier.isDeleting">
+                    [disabled]="supplier.isDeleting" title="Eliminar">
                     <span *ngIf="" class="spinner-border spinner-border-sm"></span>
-                    <span *ngIf="!supplier.isDeleting">Eliminar</span>
+                    <span *ngIf="!supplier.isDeleting"><i class="fa-solid fa-trash-can"></i></span>
                 </button>
             </td>
         </tr>
@@ -49,7 +56,7 @@
     </tbody>
 </table>
 <nav>
-    <ul class="pagination justify-content-center">
+    <ul class="pagination flex-wrap justify-content-center">
         <li class="page-item" *ngFor="let link of links">
             <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}"
                 href="{{link.href}}" (click)="onChangePagination($event)">{{link.label}}</a>

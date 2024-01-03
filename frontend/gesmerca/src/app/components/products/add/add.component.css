@@ -1,0 +1,24 @@
+.twocolumns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10%;
+}
+
+.twocolumns div {
+  flex-basis: 45%;
+}
+
+.twocolumns div div {
+  display: flex;
+  flex-direction: row;
+}
+
+.onerow {
+  display: flex;
+}
+
+.btns-save-cancel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

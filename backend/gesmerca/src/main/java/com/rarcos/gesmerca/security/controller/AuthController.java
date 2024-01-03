@@ -3,12 +3,17 @@ package com.rarcos.gesmerca.security.controller;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.jaas.SecurityContextLoginModule;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +28,9 @@ import com.rarcos.gesmerca.security.dto.LoginUser;
 import com.rarcos.gesmerca.security.dto.NewUser;
 import com.rarcos.gesmerca.security.dto.ProfileUser;
 import com.rarcos.gesmerca.security.dto.User;
+import com.rarcos.gesmerca.security.entity.MainUser;
 import com.rarcos.gesmerca.security.jwt.JwtProvider;
+import com.rarcos.gesmerca.security.service.TokenBlacklist;
 import com.rarcos.gesmerca.security.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +48,9 @@ public class AuthController {
     @Autowired
     JwtProvider jwtProvider;
 
+    @Autowired
+    TokenBlacklist tokenBlacklist;
+
     @PostMapping("/register")
     public ResponseEntity<Message> nuevo(@Valid @RequestBody NewUser newUser) {
         return ResponseEntity.ok(userService.save(newUser));
@@ -52,8 +62,11 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtDto> refresh(@RequestHeader("Authorization") String bearerToken) throws ParseException {
-        return ResponseEntity.ok(userService.refresh(bearerToken.split(" ")[1].trim()));
+    public ResponseEntity<JwtDto> refresh(HttpServletRequest request, HttpServletResponse response,
+            @RequestHeader("Authorization") String bearerToken) throws ParseException {
+        String token = bearerToken.split(" ")[1].trim();
+        tokenBlacklist.addToBlacklist(token);
+        return ResponseEntity.ok(userService.refresh(token));
     }
 
     @GetMapping("/user-profile")
@@ -80,7 +93,11 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Message> logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Message> logout(HttpServletRequest request, HttpServletResponse response,
+            @RequestHeader("Authorization") String bearerToken) {
+        String token = bearerToken.split(" ")[1].trim();
+        tokenBlacklist.addToBlacklist(token);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);

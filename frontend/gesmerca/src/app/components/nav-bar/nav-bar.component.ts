@@ -1,10 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterEvent, RoutesRecognized } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationStart,
+  Router,
+  RouterEvent,
+  RoutesRecognized,
+} from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
-import { CheckSessionService } from 'src/app/services/check-session.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { HelpService } from 'src/app/services/help.service';
 
@@ -15,15 +20,14 @@ import { HelpService } from 'src/app/services/help.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy {
   private doc!: Document;
-  private timer: any;
   private subs: Subscription = new Subscription();
   private subs2: Subscription = new Subscription();
+  private subs3: Subscription = new Subscription();
 
   constructor(
     protected authService: AuthService,
     private configService: ConfigService,
     protected helpService: HelpService,
-    protected checkSessionService: CheckSessionService,
     private toastr: ToastrService,
     private router: Router,
     @Inject(DOCUMENT) private document: any
@@ -34,19 +38,19 @@ export class NavBarComponent implements OnInit, OnDestroy {
    *
    */
   ngOnInit(): void {
-    this.router.events.subscribe(e => {
+    this.subs = this.router.events.subscribe(e => {
       if (e instanceof RouterEvent) {
         if (e instanceof RoutesRecognized) {
           this.createBreadcrumb(e.url);
         }
         if (e instanceof NavigationEnd) {
           //The user profile is reloaded because it is necessary to load the user's preferences in case of url change or page update.
-          if (this.authService.isLoggedIn) {
-            this.subs = this.authService.profile().subscribe();
-            //Check each 15 minutes if user is active
-            this.timer = setInterval(() => {
-              this.checkSessionService.open('checkSession-modal');
-            }, 900000);
+          if (this.authService.isLoggedIn && e.url != '/login?expired=true') {
+            this.subs2 = this.authService.profile().subscribe({
+              error: error => {
+                this.toastr.error(error ? error : 'No se puede conectar con el servidor');
+              },
+            });
           }
         }
       }
@@ -81,9 +85,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
    */
   handleLogout() {
     //Send logout to backend
-    this.subs2 = this.authService.logout().subscribe({
-      next: () => {
+    this.subs3 = this.authService.logout().subscribe({
+      next: res => {
         this.router.navigate(['/']);
+        this.toastr.info('Se ha cerrado la sesión');
         //Check user config to if activate sharpcontrast
         if (this.configService.hasUserConfig('sharpcontrast') == 'true')
           this.sharpContrastDeactivate();
@@ -241,5 +246,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subs.unsubscribe();
     this.subs2.unsubscribe();
+    this.subs3.unsubscribe();
   }
 }

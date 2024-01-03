@@ -98,7 +98,7 @@ export class RoleListComponent implements OnInit, OnDestroy {
       this.subs4 = this.roleService.setRoleUser(param, userId).subscribe({
         next: result => {
           let res = JSON.parse(JSON.stringify(result));
-          res.error ? this.toastr.error(res.error) : this.toastr.success(res.message);
+          this.toastr.success(res.message);
         },
         error: error => {
           this.toastr.error(error ? error : 'No se puede conectar con el servidor');

@@ -18,6 +18,9 @@
         <ng-container *ngIf="registerFormControls['email'].errors?.['required']">
           Introduzca su email.
         </ng-container>
+        <ng-container *ngIf="registerFormControls['email'].errors?.['email']">
+          Introduzca un email válido.
+        </ng-container>
       </div>
     </div>
     <div class="mb-3">
@@ -30,6 +33,21 @@
         </ng-container>
         <ng-container
           *ngIf="registerFormControls['password'].errors?.['pattern'] && !registerFormControls['password'].errors?.['required']">
+          La contraseña debe contener letras minúsculas, mayúsculas y al menos un número.
+        </ng-container>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="inputPasswordConfirmation" class="form-label">Repetir contraseña</label>
+      <input type="password" class="form-control" id="inputPasswordConfirmation"
+        formControlName="password_confirmation">
+      <div class="form-text text-danger"
+        *ngIf="registerFormControls['password_confirmation'].invalid && (registerFormControls['password_confirmation'].dirty || registerFormControls['password_confirmation'].touched)">
+        <ng-container *ngIf="registerFormControls['password_confirmation'].errors?.['required']">
+          Introduzca una contraseña.
+        </ng-container>
+        <ng-container
+          *ngIf="registerFormControls['password_confirmation'].errors?.['pattern'] && !registerFormControls['password_confirmation'].errors?.['required']">
           La contraseña debe contener letras minúsculas, mayúsculas y al menos un número.
         </ng-container>
       </div>

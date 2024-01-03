@@ -25,6 +25,6 @@ export class PermissionService {
   }
 
   setPermissionsUser(params: any, id: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/permission/user/${id}`, params);
+    return this.http.post(`${this.baseUrl}/permission/user/${id}`, params);
   }
 }

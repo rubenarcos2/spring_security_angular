@@ -1,8 +1,8 @@
 export interface GoodsReceiptProduct {
   id?: number;
-  idgoodsreceipt?: number;
-  idproduct?: number;
-  nameproduct?: string;
+  idGoodsReceipt?: number;
+  idProduct?: number;
+  nameProduct?: string;
   quantity?: number;
   price?: number;
   isDeleting?: boolean;

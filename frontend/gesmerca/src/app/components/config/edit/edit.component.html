@@ -3,12 +3,12 @@
         <form [formGroup]="configForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label for="inputName" class="form-label">Nombre</label>
-                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputName"
-                    formControlName="name" readonly>
+                <input type="text" class="form-control" id="inputName" formControlName="name" readonly>
             </div>
             <div class="mb-3">
                 <label for="inputTitle" class="form-label">Título</label>
-                <input type="text" class="form-control" id="inputTitle" formControlName="title">
+                <input type="text" class="form-control" id="inputTitle" formControlName="title"
+                    (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="configFormControls['title'].invalid && (configFormControls['title'].dirty || configFormControls['title'].touched)">
                     <ng-container *ngIf="configFormControls['title'].errors?.['required']">
@@ -18,7 +18,7 @@
             </div>
             <div class="mb-3">
                 <label for="inputDescription" class="form-label">Descripción</label>
-                <textarea (change)="onChangeInput($event)" class="form-control" id="inputDescription"
+                <textarea (keyup)="onChangeInput($event)" class="form-control" id="inputDescription"
                     formControlName="description"></textarea>
                 <div class="form-text text-danger"
                     *ngIf="configFormControls['description'].invalid && (configFormControls['description'].dirty || configFormControls['description'].touched)">
@@ -32,8 +32,7 @@
             </div>
             <div class="mb-3">
                 <label for="inputDomain" class="form-label">Dominio</label>
-                <input (change)="onChangeInput($event)" type="text" class="form-control" id="inputDomain"
-                    formControlName="domain" readonly>
+                <input type="text" class="form-control" id="inputDomain" formControlName="domain" readonly>
             </div>
             <div class="mb-3">
                 <label for="inputValue" class="form-label">Valor</label>
@@ -43,7 +42,8 @@
                         (change)="onChangeInput($event)" id="inputValue" formControlName="value">
                 </span>
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="!configForm.valid || !isSubmitted">Enviar</button>
+            <button type="submit" class="btn btn-primary"
+                [disabled]="!configForm.valid || !isFormUpdating">Enviar</button>
         </form>
     </div>
 </div>

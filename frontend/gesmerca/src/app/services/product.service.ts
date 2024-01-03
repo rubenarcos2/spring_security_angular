@@ -29,6 +29,14 @@ export class ProductService {
     );
   }
 
+  getAllBySupplier(id: any, param?: any) {
+    return this.http.get<Product[]>(`${this.baseUrl}/product/allbysupplier/${id}?${param}`).pipe(
+      map(result => {
+        return result;
+      })
+    );
+  }
+
   getById(id: any) {
     return this.http.get<Product>(`${this.baseUrl}/product/${id}`);
   }
@@ -37,7 +45,7 @@ export class ProductService {
     return this.http.post(`${this.baseUrl}/product/create`, params);
   }
 
-  update(params: any): Observable<any> {
+  update(params: any) {
     const headers = new HttpHeaders();
     return this.http.put(`${this.baseUrl}/product/update`, params, { headers });
   }

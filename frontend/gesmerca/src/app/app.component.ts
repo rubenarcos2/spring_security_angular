@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { HelpService } from './services/help.service';
+import { CheckSessionService } from './services/check-session.service';
 
 @Component({
   selector: 'app-root',
@@ -16,12 +17,13 @@ export class AppComponent {
   constructor(
     public authService: AuthService,
     private configService: ConfigService,
-    private helpService: HelpService
+    private helpService: HelpService,
+    private checkSessionService: CheckSessionService
   ) {}
 
   /**
    * Detect all click on page and play TTS with the content
-   *
+   * Detect all mouse click on page and start/reset de idle timer
    */
   @HostListener('document:click', ['$event'])
   documentClick(event: MouseEvent) {
@@ -32,11 +34,13 @@ export class AppComponent {
       //On all users if tts in general config
       else if (this.configService.hasConfig('tts') == 'true') this.tts(event);
     }
+
+    this.checkSessionService.startResetIdleTimer();
   }
 
   /**
    * Detect F2 key event and open help window
-   *
+   * Detect all key press on page and start/reset de idle timer
    */
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
@@ -49,15 +53,22 @@ export class AppComponent {
         this._helpOpen = false;
       }
     }
+
+    this.checkSessionService.startResetIdleTimer();
   }
 
   /**
    * This function start on event page
-   *
+   * Detect load on page and start/reset de idle timer
    */
   ngOnInit() {
     this.configService.getAll().subscribe();
     this._ttsSynth.lang = 'es-ES';
+
+    if (this.authService.isLoggedIn) {
+      this.checkSessionService.startCheckSession();
+      this.checkSessionService.startResetIdleTimer();
+    }
   }
 
   /**

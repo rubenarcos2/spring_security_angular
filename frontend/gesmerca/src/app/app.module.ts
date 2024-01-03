@@ -37,6 +37,7 @@ import { GoodsReceiptListComponent } from './components/goodsreceipt/list/list.c
 import { GoodsReceiptAddComponent } from './components/goodsreceipt/add/add.component';
 import { GoodsReceiptEditComponent } from './components/goodsreceipt/edit/edit.component';
 import { CheckSessionComponent } from './components/check-session/check-session.component';
+import { CanDeactivateBlockNavigationIfChange } from './guards/block-navigation-if-change.guard';
 
 registerLocaleData(localeEs);
 @NgModule({
@@ -81,6 +82,7 @@ registerLocaleData(localeEs);
     Meta,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     DatePipe,
+    CanDeactivateBlockNavigationIfChange,
   ],
   bootstrap: [AppComponent],
 })

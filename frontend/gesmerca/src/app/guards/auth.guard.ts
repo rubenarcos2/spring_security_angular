@@ -18,14 +18,13 @@ export class AuthGuard {
    *
    */
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const authUser = this.authService.getAuthUser();
-    if (authUser) {
+    if (this.authService.isLoggedIn) {
       // check if route is restricted by role
       const { permission } = route.data;
       if (permission && !this.authService.hasPermission(String(permission))) {
         // role not authorized so redirect to home page
-        this.router.navigate(['/login']);
-        this.toastr.error('Usuario no autorizado');
+        this.router.navigate(['/']);
+        this.toastr.warning('Usuario no autorizado');
         return false;
       }
       return true;

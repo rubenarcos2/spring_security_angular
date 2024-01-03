@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
 //Login, profile, register and not found page
 import { LoginComponent } from './components/auth/login/login.component';
 import { ProfileComponent } from './components/auth/profile/profile.component';
@@ -25,6 +24,9 @@ import { SupplierEditComponent } from './components/suppliers/edit/edit.componen
 import { GoodsReceiptListComponent } from './components/goodsreceipt/list/list.component';
 import { GoodsReceiptAddComponent } from './components/goodsreceipt/add/add.component';
 import { GoodsReceiptEditComponent } from './components/goodsreceipt/edit/edit.component';
+//Guards
+import { CanDeactivateBlockNavigationIfChange } from './guards/block-navigation-if-change.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -54,12 +56,14 @@ const routes: Routes = [
     path: 'productos/nuevo',
     component: ProductAddComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['product-create'] },
   },
   {
     path: 'productos/editar/:id',
     component: ProductEditComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['product-edit'] },
   },
   {
@@ -72,12 +76,14 @@ const routes: Routes = [
     path: 'proveedores/nuevo',
     component: SupplierAddComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['supplier-create'] },
   },
   {
     path: 'proveedores/editar/:id',
     component: SupplierEditComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['supplier-edit'] },
   },
   {
@@ -90,12 +96,14 @@ const routes: Routes = [
     path: 'recepcion/nuevo',
     component: GoodsReceiptAddComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['goodsreceipt-create'] },
   },
   {
     path: 'recepcion/editar/:id',
     component: GoodsReceiptEditComponent,
     canActivate: [AuthGuard],
+    canDeactivate: [CanDeactivateBlockNavigationIfChange],
     data: { permission: ['goodsreceipt-edit'] },
   },
   {

@@ -9,3 +9,7 @@
 #search-report input {
   margin-right: 0.5rem;
 }
+
+#search-exclusion {
+  padding-left: 4rem;
+}

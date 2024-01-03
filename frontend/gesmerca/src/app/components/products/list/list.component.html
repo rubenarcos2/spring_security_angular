@@ -4,15 +4,17 @@
 </div>
 <div id="search-report">
     <div>
-        <input type="text" placeholder="Nombre, desc, precio, stock..." #filter>
-        <button class="primary" type="button" (click)="search(filter.value, $event)">
-            <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!isSearching">Buscar</span>
+        <input type="text" placeholder="Nombre, desc, precio, stock..." #filter id="filterSearch" [readonly]="isFilter">
+        <button class="btn-secondary btn-sm mb-2" type="button" (click)="search()">
+            <span *ngIf="isSearching" title="Filtrando productos"><i class="fa-solid fa-spinner fa-spin"></i></span>
+            <span *ngIf="!isSearching">Filtrar</span>
         </button>
     </div>
-    <button id="report-pdf" class="btn-secondary btn-sm mb-2" (click)="productsToPDF()" [disabled]="isPrintingPDF">
-        <span *ngIf="isPrintingPDF" class="spinner-border spinner-border-sm"></span>
-        <span *ngIf="!isPrintingPDF">Descargar informe PDF</span></button>
+    <button id="report-pdf" class="btn-secondary btn-sm mb-2" (click)="productsToPDF()" [disabled]="isPrintingPDF"
+        [hidden]="!authService.hasPermission('supplier-list')">
+        <span *ngIf="isPrintingPDF" title="Creando informe"><i class="fa-solid fa-spinner fa-spin"></i></span>
+        <span *ngIf="!isPrintingPDF" title="Descargar informe PDF">Informe <i
+                class="fa-solid fa-file-pdf"></i></span></button>
 </div>
 <table *ngIf="authService.hasPermission('product-list')" class="table table-striped">
     <thead>
@@ -20,28 +22,32 @@
             <th></th>
             <th>Nombre</th>
             <th>Descripción</th>
+            <th *ngIf="authService.hasPermission('supplier-list')">Proveedor</th>
             <th>Precio</th>
             <th>Stock</th>
-            <th *ngIf="authService.hasPermission('product-edit') && authService.hasPermission('product-delete')"></th>
+            <th *ngIf="authService.hasPermission('product-edit') || authService.hasPermission('product-delete')">
+            </th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let product of products">
-            <td style="text-align: center;"><img class="spinner-border spinner-border-sm align-center"
-                    (load)="onLoadImg($event)" src="{{product.thumbail_32x32}}" width="auto" height="32"
-                    alt="Imagen de un {{product.name}}"></td>
+            <td style="text-align: center;"><img style="border-radius: 0.5rem;"
+                    class="spinner-border spinner-border-sm align-center" (load)="onLoadImg($event)"
+                    src="{{product.thumbail_32x32}}" width="32" height="auto" alt="Imagen de un {{product.name}}"></td>
             <td>{{product.name}}</td>
             <td>{{product.description}}</td>
+            <td *ngIf="authService.hasPermission('supplier-list')">{{product.supplierName}}</td>
             <td>{{product.price | currency: 'EUR'}}</td>
             <td>{{product.stock}}</td>
-            <td *ngIf="authService.hasPermission('product-edit') && authService.hasPermission('product-delete')">
+            <td *ngIf="authService.hasPermission('product-edit') || authService.hasPermission('product-delete')">
                 <a *ngIf="authService.hasPermission('product-edit')" routerLink="editar/{{product.id}}"
-                    class="btn btn-sm btn-primary me-1">Editar</a>
+                    class="btn btn-sm btn-primary me-2" title="Ver/Editar"><i
+                        class="fa-regular fa-pen-to-square"></i></a>
                 <button *ngIf="authService.hasPermission('product-delete')"
                     (click)="deleteProduct(product.name, product.id)" class="btn btn-sm btn-danger btn-delete-user"
-                    [disabled]="product.isDeleting">
+                    title="Eliminar" [disabled]="product.isDeleting">
                     <span *ngIf="" class="spinner-border spinner-border-sm"></span>
-                    <span *ngIf="!product.isDeleting">Eliminar</span>
+                    <span *ngIf="!product.isDeleting"><i class="fa-solid fa-trash-can"></i></span>
                 </button>
             </td>
         </tr>
@@ -53,7 +59,7 @@
     </tbody>
 </table>
 <nav>
-    <ul class="pagination justify-content-center">
+    <ul class="pagination flex-wrap justify-content-center">
         <li class="page-item" *ngFor="let link of links">
             <a class="page-link {{link.active ? 'active' : ''}} {{link.url === null?'disabled':''}}"
                 href="{{link.href}}" (click)="onChangePagination($event)">{{link.label}}</a>

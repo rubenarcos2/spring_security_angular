@@ -3,7 +3,8 @@
         <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label for="inputCifNif" class="form-label">Cif/Nif</label>
-                <input type="text" class="form-control" id="inputCifNif" formControlName="cifNif">
+                <input type="text" class="form-control" id="inputCifNif" formControlName="cifNif"
+                    (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['cifNif'].invalid && (supplierFormControls['cifNif'].dirty || supplierFormControls['cifNif'].touched)">
                     <ng-container *ngIf="supplierFormControls['cifNif'].errors?.['required']">
@@ -13,7 +14,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputName" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="inputName" formControlName="name">
+                <input type="text" class="form-control" id="inputName" formControlName="name"
+                    (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['name'].invalid && (supplierFormControls['name'].dirty || supplierFormControls['name'].touched)">
                     <ng-container *ngIf="supplierFormControls['name'].errors?.['required']">
@@ -26,7 +28,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputAddress" class="form-label">Dirección</label>
-                <textarea class="form-control" id="inputAddress" formControlName="address"></textarea>
+                <textarea class="form-control" id="inputAddress" formControlName="address"
+                    (keyup)="onChangeInput($event)"></textarea>
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['address'].invalid && (supplierFormControls['address'].dirty || supplierFormControls['address'].touched)">
                     <ng-container *ngIf="supplierFormControls['address'].errors?.['required']">
@@ -36,7 +39,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputCity" class="form-label">Ciudad</label>
-                <input type="text" class="form-control" id="inputCity" formControlName="city">
+                <input type="text" class="form-control" id="inputCity" formControlName="city"
+                    (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['city'].invalid && (supplierFormControls['city'].dirty || supplierFormControls['city'].touched)">
                     <ng-container *ngIf="supplierFormControls['city'].errors?.['required']">
@@ -46,7 +50,7 @@
             </div>
             <div class="mb-3">
                 <label for="inputPhone" class="form-label">Teléfono</label>
-                <input class="form-control" id="inputPhone" formControlName="phone">
+                <input class="form-control" id="inputPhone" formControlName="phone" (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['phone'].invalid && (supplierFormControls['phone'].dirty || supplierFormControls['phone'].touched)">
                     <ng-container *ngIf="supplierFormControls['phone'].errors?.['required']">
@@ -56,7 +60,7 @@
             </div>
             <div class="mb-3">
                 <label for="inputEmail" class="form-label">Email</label>
-                <input class="form-control" id="inputEmail" formControlName="email">
+                <input class="form-control" id="inputEmail" formControlName="email" (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['email'].invalid && (supplierFormControls['email'].dirty || supplierFormControls['email'].touched)">
                     <ng-container *ngIf="supplierFormControls['email'].errors?.['required']">
@@ -66,7 +70,7 @@
             </div>
             <div class="mb-3">
                 <label for="inputWeb" class="form-label">Página web</label>
-                <input class="form-control" id="inputWeb" formControlName="web">
+                <input class="form-control" id="inputWeb" formControlName="web" (keyup)="onChangeInput($event)">
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['web'].invalid && (supplierFormControls['web'].dirty || supplierFormControls['web'].touched)">
                     <ng-container *ngIf="supplierFormControls['web'].errors?.['required']">
@@ -76,7 +80,8 @@
             </div>
             <div class="mb-3">
                 <label for="inputNotes" class="form-label">Comentarios</label>
-                <textarea class="form-control" id="inputNotes" formControlName="notes" rows="4"></textarea>
+                <textarea class="form-control" id="inputNotes" formControlName="notes" rows="4"
+                    (keyup)="onChangeInput($event)"></textarea>
                 <div class="form-text text-danger"
                     *ngIf="supplierFormControls['notes'].invalid && (supplierFormControls['notes'].dirty || supplierFormControls['notes'].touched)">
                     <ng-container *ngIf="supplierFormControls['notes'].errors?.['required']">
@@ -84,8 +89,11 @@
                     </ng-container>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="!supplierForm.valid || !isSubmitted">Crear
-                producto</button>
+            <div class="btns-save-cancel">
+                <button class="btn btn-secondary" routerLink='/proveedores'>Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="supplierForm.invalid">Crear
+                    proveedor</button>
+            </div>
         </form>
     </div>
 </div>

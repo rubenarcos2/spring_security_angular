@@ -15,8 +15,7 @@ export class ConfigService {
   getAll() {
     return this.http.get<Config[]>(`${this.baseUrl}/config`).pipe(
       map(result => {
-        if (JSON.stringify(result) != '[]')
-          sessionStorage.setItem('generalConfig', JSON.stringify(result));
+        if (String(result) != '[]') sessionStorage.setItem('generalConfig', JSON.stringify(result));
         return result;
       })
     );
@@ -25,8 +24,7 @@ export class ConfigService {
   getAllConfigsOfUser(id: any) {
     return this.http.get<Config[]>(`${this.baseUrl}/config/user/${id}`).pipe(
       map(result => {
-        if (JSON.stringify(result) != '[]')
-          sessionStorage.setItem('userConfig', JSON.stringify(result));
+        if (String(result) != '[]') sessionStorage.setItem('userConfig', JSON.stringify(result));
         return result;
       })
     );
@@ -49,15 +47,15 @@ export class ConfigService {
   }
 
   update(params: any) {
-    return this.http.put(`${this.baseUrl}/config/update`, params);
+    return this.http.post(`${this.baseUrl}/config/update/`, params);
   }
 
   updateUserConfig(params: any, id: any) {
-    return this.http.put(`${this.baseUrl}/config/user/update/${id}`, params);
+    return this.http.post(`${this.baseUrl}/config/user/update/${id}`, params);
   }
 
-  delete(id: any) {
-    return this.http.delete(`${this.baseUrl}/config/delete/${id}`);
+  delete(params: any) {
+    return this.http.post(`${this.baseUrl}/config/delete`, params);
   }
 
   deleteUserConfig(params: any, id: any) {
@@ -73,7 +71,7 @@ export class ConfigService {
   hasUserConfig(config: string) {
     let userConfigs: Config[] = JSON.parse(sessionStorage.getItem('userConfig') as string);
     let userConfig: Config = userConfigs?.filter(conf => conf.name == config)[0];
-    return userConfig?.value;
+    return userConfig?.pivot.value;
   }
 
   get isUserConfigLoaded() {
