@@ -14,7 +14,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.time.LocalTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 
 @Component
 public class GoodsReceiptModelAssembler extends RepresentationModelAssemblerSupport<GoodsReceipt, GoodsReceiptModel> {

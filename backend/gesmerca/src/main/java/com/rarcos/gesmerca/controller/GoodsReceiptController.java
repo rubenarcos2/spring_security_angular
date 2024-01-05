@@ -6,10 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
 import com.rarcos.gesmerca.assemblers.GoodsReceiptModelAssembler;
 import com.rarcos.gesmerca.dto.Message;
 import com.rarcos.gesmerca.dto.PriceEstimatedDto;
-import com.rarcos.gesmerca.dto.ProductDto;
 import com.rarcos.gesmerca.dto.Error;
 import com.rarcos.gesmerca.dto.GoodsReceiptDto;
 import com.rarcos.gesmerca.dto.GoodsReceiptDtoRequest;
