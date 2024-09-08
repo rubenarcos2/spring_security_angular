@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://vps.rarcos.com:10451/" target="_blank">
-        <img src="./frontend/gesmerca/src/assets/img/icons/gesmerca.png" alt="GesMerCa Logo">
+    <a href="https://gmcca-spring.rarcos.com/" target="_blank">
+        <img src="./frontend/gesmerca/src/assets/img/icons/gesmerca.png" alt="Logo">
     </a>
     +
     <a href="https://angular.io/" target="_blank">
@@ -12,7 +12,7 @@
     </a>
 </p>
 
-<p align="center"><a href="https://vps.rarcos.com:10451/" target="_blank">Try the demo online</a></p>
+<p align="center"><a href="https://gmcca-spring.rarcos.com/" target="_blank">Try the demo online</a></p>
 
 # Frontend - Angular
 
