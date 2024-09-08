@@ -10,7 +10,7 @@ import { CheckSessionService } from './services/check-session.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'GesMerCa';
+  title = 'Gestión de mercancías con control de acceso';
   private _ttsSynth = new SpeechSynthesisUtterance();
   private _helpOpen = false;
 
