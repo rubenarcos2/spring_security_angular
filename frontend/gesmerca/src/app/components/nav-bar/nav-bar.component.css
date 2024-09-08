@@ -67,11 +67,19 @@ header nav {
   #btn-help::after {
     content: ' Ayuda';
   }
+
+  .navbar-brand {
+    font-size: medium;
+  }
 }
 
 @media screen and (max-width: 480px) {
   /* We indicate how my mock-up will be structured for devices smaller than 768px*/
   #btn-help::after {
     content: ' Ayuda';
+  }
+
+  .navbar-brand {
+    font-size: small;
   }
 }
