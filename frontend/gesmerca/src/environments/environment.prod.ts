@@ -1,4 +1,4 @@
 export const environment = {
-  baseUrl: 'https://vps.rarcos.com:10452/api',
+  baseUrl: 'https://gmcca-spring-backend.rarcos.com/api',
   production: true,
 };
